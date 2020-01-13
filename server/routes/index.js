@@ -1,6 +1,8 @@
 import path from 'path';
 
-module.exports = (app) => {
+module.exports = (app, db) => {
+
+	require('./guest')(app, db);
 
 	app.route('*')
 		.get((req, res) => {

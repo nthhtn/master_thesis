@@ -1,6 +1,13 @@
 import { ObjectID } from 'mongodb';
 
-export default class UserModel {
+// let conversation = {
+// 	_id: 'string',
+// 	title: 'string',
+// 	content: 'string',
+// 	workgroupId: 'string'
+// };
+
+export default class ConversationModel {
 
 	constructor(db) {
 		this._db = db;

@@ -1,5 +1,16 @@
 import { ObjectID } from 'mongodb';
 
+// let user = {
+// 	_id: 'string',
+// 	email: 'string',
+// 	password: 'string',
+// 	firstName: 'string',
+// 	lastName: 'string',
+// 	phone: 'string',
+// 	address: 'string',
+// 	userType: 'string'
+// };
+
 export default class UserModel {
 
 	constructor(db) {

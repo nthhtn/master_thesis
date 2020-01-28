@@ -1,3 +1,6 @@
 import { combineReducers } from 'redux';
 
-export default combineReducers(Object.assign({}));
+import workgroup from './Workgroup';
+import conversation from './Conversation';
+
+export default combineReducers({ workgroup, conversation });

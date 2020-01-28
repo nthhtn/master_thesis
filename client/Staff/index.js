@@ -14,7 +14,7 @@ const rootComponent = (
 					<div className="simplebar-scroll-content" style={{ paddingRight: '15px', marginBottom: '-30px' }}>
 						<div className="simplebar-content" style={{ paddingBottom: '15px', marginRight: '-15px' }}>
 							<div className="content-header bg-white-5">
-								<a className="font-w600 text-dual" href="index.html">
+								<a className="font-w600 text-dual" href={undefined}>
 									<i className="fa fa-circle-notch text-primary"></i>
 									<span className="smini-hide">
 										<span className="font-w700 font-size-h5">ne</span> <span className="font-w400">4.2</span>
@@ -30,12 +30,6 @@ const rootComponent = (
 										<Link className="nav-main-link active" to="/dashboard">
 											<i className="nav-main-link-icon fa fa-globe"></i>
 											<span className="nav-main-link-name">Home</span>
-										</Link>
-									</li>
-									<li className="nav-main-item">
-										<Link className="nav-main-link active" to="/profile">
-											<i className="nav-main-link-icon fa fa-user-alt"></i>
-											<span className="nav-main-link-name">Profile</span>
 										</Link>
 									</li>
 									<li className="nav-main-item">
@@ -56,18 +50,60 @@ const rootComponent = (
 											<span className="nav-main-link-name">Tasks</span>
 										</Link>
 									</li>
-									<li className="nav-main-item">
-										<Link className="nav-main-link active" to="/logout">
-											<i className="nav-main-link-icon fa fa-sign-out-alt"></i>
-											<span className="nav-main-link-name">Logout</span>
-										</Link>
-									</li>
 								</ul>
 							</div>
 						</div>
 					</div>
 				</nav>
-				<header id="page-header"></header>
+				<header id="page-header">
+					<div className="content-header">
+						<div className="d-flex align-items-center">
+							<button type="button" className="btn btn-sm btn-dual mr-2 d-lg-none" data-toggle="layout" data-action="sidebar_toggle">
+								<i className="fa fa-fw fa-bars"></i>
+							</button>
+							<button type="button" className="btn btn-sm btn-dual mr-2 d-none d-lg-inline-block" data-toggle="layout" data-action="sidebar_mini_toggle">
+								<i className="fa fa-fw fa-ellipsis-v"></i>
+							</button>
+							<button type="button" className="btn btn-sm btn-dual d-sm-none" data-toggle="layout" data-action="header_search_on">
+								<i className="si si-magnifier"></i>
+							</button>
+							<form className="d-none d-sm-inline-block" action="be_pages_generic_search.html" method="POST">
+								<div className="input-group input-group-sm">
+									<input type="text" className="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" name="page-header-search-input2" />
+									<div className="input-group-append">
+										<span className="input-group-text bg-body border-0">
+											<i className="si si-magnifier"></i>
+										</span>
+									</div>
+								</div>
+							</form>
+						</div>
+						<div className="d-flex align-items-center">
+							<div className="dropdown d-inline-block ml-2">
+								<button type="button" className="btn btn-sm btn-dual" id="page-header-user-dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<img className="rounded" src="/assets/oneui/media/avatars/avatar10.jpg" alt="Header Avatar" style={{ width: '18px' }} />
+									<span className="d-none d-sm-inline-block ml-1">Adam</span>
+									<i className="fa fa-fw fa-angle-down d-none d-sm-inline-block"></i>
+								</button>
+								<div className="dropdown-menu dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-user-dropdown" x-placement="bottom-end" style={{ position: 'absolute', willChange: 'transform', top: '0px', left: '0px', transform: 'translate3d(104px, 31px, 0px)' }}>
+									<div className="p-3 text-center bg-primary">
+										<img className="img-avatar img-avatar48 img-avatar-thumb" src="/assets/oneui/media/avatars/avatar10.jpg" alt="" />
+									</div>
+									<div className="p-2">
+										<a className="dropdown-item d-flex align-items-center justify-content-between" href="#">
+											<span>Profile</span>
+											<i className="si si-user ml-1"></i>
+										</a>
+										<a className="dropdown-item d-flex align-items-center justify-content-between" href="#">
+											<span>Log Out</span>
+											<i className="si si-logout ml-1"></i>
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
 				<Main />
 			</div>
 		</BrowserRouter>

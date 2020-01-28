@@ -1,6 +1,12 @@
 import { ObjectID } from 'mongodb';
 
-export default class UserModel {
+// let workgroup = {
+// 	_id: 'string',
+// 	name: 'string',
+// 	description: 'string'
+// };
+
+export default class WorkgroupModel {
 
 	constructor(db) {
 		this._db = db;

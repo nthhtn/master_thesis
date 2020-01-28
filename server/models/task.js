@@ -1,6 +1,16 @@
 import { ObjectID } from 'mongodb';
 
-export default class UserModel {
+// let task = {
+// 	_id: 'string',
+// 	name: 'string',
+// 	description: 'string',
+// 	status: 'string',
+// 	creatorId: 'string',
+// 	assigneeId: 'string',
+// 	workgroupId: 'string'
+// };
+
+export default class TaskModel {
 
 	constructor(db) {
 		this._db = db;

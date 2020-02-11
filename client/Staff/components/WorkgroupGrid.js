@@ -13,17 +13,18 @@ class WorkgroupGridItem extends Component {
 	}
 
 	render() {
+		const { workgroupId, workgroupName, workgroupDescription } = this.props;
 		return (
 			<div className="col-sm-6 col-xl-4">
 				<div className="block">
 					<div className="block-header">
-						<Link to={`/workgroups/${this.props.workgroupId}`}><h3 className="block-title">{this.props.workgroupName}</h3></Link>
+						<Link to={`/workgroups/${workgroupId}`}><h3 className="block-title">{workgroupName}</h3></Link>
 					</div>
 					<div className="block-content block-content-full text-center">
-						<img className="img-avatar img-avatar96 img-avatar-thumb" src="assets/oneui/media/avatars/avatar12.jpg" alt="" />
+						<img className="img-avatar img-avatar96 img-avatar-thumb" src="/assets/oneui/media/avatars/avatar12.jpg" alt="" />
 					</div>
 					<div className="block-content font-size-sm">
-						<p>{this.props.workgroupDescription}</p>
+						<p>{workgroupDescription}</p>
 					</div>
 				</div>
 			</div>
@@ -99,7 +100,7 @@ export default class WorkgroupGrid extends Component {
 				</div>
 				<div className="content content-boxed">
 					<div className="row">
-						{this.props.workgroup.listWorkgroup.map((item) =>
+						{this.props.workgroup.list.map((item) =>
 							<WorkgroupGridItem key={item._id} workgroupId={item._id}
 								workgroupName={item.name} workgroupDescription={item.description} />
 						)}

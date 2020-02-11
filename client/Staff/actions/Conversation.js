@@ -15,12 +15,14 @@ export function createConversationSuccess(conversation) {
 	return { type: 'CREATE_CONVERSATION', conversation };
 }
 
-export function listConversation() {
+export function listConversation(query = {}) {
 	return async (dispatch) => {
-		const response = await fetch(`/api/conversations`, { credentials: 'same-origin' });
+		const queryString = Object.keys(query).map((key) => (key + '=' + query[key])).join('&');
+		const url = '/api/conversations' + (Object.keys(query).length > 0 ? '?' + queryString : '');
+		const response = await fetch(url, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listConversationSuccess(responseJson.result));
-	}
+	};
 }
 
 export function listConversationSuccess(list) {

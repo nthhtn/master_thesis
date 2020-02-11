@@ -4,7 +4,8 @@ import { ObjectID } from 'mongodb';
 // 	_id: 'string',
 // 	title: 'string',
 // 	content: 'string',
-// 	workgroupId: 'string'
+// 	workgroupId: 'string',
+// 	creatorId: 'string'
 // };
 
 export default class ConversationModel {
@@ -57,6 +58,25 @@ export default class ConversationModel {
 	async queryByFields(fields = {}) {
 		try {
 			const result = await this._db.collection(this._table).find(fields).toArray();
+			return await result;
+		} catch (error) {
+			return Promise.reject(error.message);
+		}
+	}
+
+	async lookupByFields(fields = {}) {
+		const lookup = {
+			from: 'user',
+			let: { creatorId: '$creatorId' },
+			pipeline: [
+				{ $match: { $expr: { $eq: ['$_id', '$$creatorId'] } } },
+				{ $project: { firstName: 1, lastName: 1, email: 1 } }
+			],
+			as: 'creator'
+		};
+		const aggregate = [{ $match: fields }, { $lookup: lookup }, { $unwind: { path: '$creator' } }];
+		try {
+			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return await result;
 		} catch (error) {
 			return Promise.reject(error.message);

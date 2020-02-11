@@ -47,7 +47,7 @@ export default class Conversation extends Component {
 							<table className="table table-borderless">
 								<tbody>
 									<tr>
-										<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
+										<td className="d-none d-sm-table-cell text-center" style={{ width: '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
 											<p className="font-size-sm">Julian Green</p>
 										</td>

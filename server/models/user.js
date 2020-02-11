@@ -67,4 +67,12 @@ export default class UserModel {
 		}
 	}
 
+	async readByEmail(email) {
+		try {
+			return await this._db.collection(this._table).findOne({ email });
+		} catch (error) {
+			return Promise.reject(error.message);
+		}
+	}
+
 }

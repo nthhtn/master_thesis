@@ -19,9 +19,9 @@ class Main extends Component {
 			<Switch>
 				<Route path='/dashboard' component={Home} />
 				<Route exact path='/workgroups'
-					render={() => (<WorkgroupGrid workgroup={this.props.workgroup} dispatch={this.props.dispatch} />)} />
+					render={() => (<WorkgroupGrid {...this.props} />)} />
 				<Route path='/workgroups/:id'
-					render={() => (<Workgroup conversation={this.props.conversation} dispatch={this.props.dispatch} />)} />
+					render={(props) => (<Workgroup {...this.props} {...props} />)} />
 				<Route exact path='/conversations/:id' component={Conversation} />
 				<Route path='*' component={Home} />
 			</Switch>

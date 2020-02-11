@@ -13,7 +13,7 @@ module.exports = (app, db) => {
 				const result = await User.queryByFields(req.query);
 				return res.json({ success: true, result });
 			} catch (error) {
-				return res.status(400).json({ success: false, error: error.message })
+				return res.status(400).json({ success: false, error: error.message });
 			}
 		})
 		.post(async (req, res) => {
@@ -21,7 +21,7 @@ module.exports = (app, db) => {
 				const result = await User.create(req.body);
 				return res.json({ success: true, result });
 			} catch (error) {
-				return res.status(400).json({ success: false, error: error.message })
+				return res.status(400).json({ success: false, error: error.message });
 			}
 		});
 

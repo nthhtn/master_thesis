@@ -1,10 +1,26 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 export default class Home extends Component {
 
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
+
+	handleSubmit() {
+		const email = $('#login-username').val();
+		const password = $('#login-password').val();
+		if (!email || !password) {
+			$('#login-error').html('Invalid username/password');
+		}
+		axios.post('/login', { email, password })
+			.then((response) => {
+				window.location.href = '/dashboard';
+			})
+			.catch((error) => {
+				$('#login-error').html(error.response.data.error);
+			});
 	}
 
 	render() {
@@ -24,31 +40,27 @@ export default class Home extends Component {
 											</div>
 											<div className="block-content">
 												<div className="p-sm-3 px-lg-4 py-lg-5">
-													<p>Welcome, please login.</p>
-													<form className="js-validation-signin" action="be_pages_auth_all.html"
-														method="POST">
+													<p>Welcome, please login</p>
+													<div className="js-validation-signin">
 														<div className="py-3">
 															<div className="form-group">
 																<input type="text"
 																	className="form-control form-control-alt form-control-lg"
-																	id="login-username" name="login-username"
-																	placeholder="Username" />
+																	id="login-username" placeholder="Username" />
 															</div>
 															<div className="form-group">
 																<input type="password"
 																	className="form-control form-control-alt form-control-lg"
-																	id="login-password" name="login-password"
-																	placeholder="Password" />
+																	id="login-password" placeholder="Password" />
 															</div>
 														</div>
+														<p id="login-error" style={{ color: 'red' }}></p>
 														<div className="form-group row">
 															<div className="col-md-6 col-xl-5">
-																<button type="submit" className="btn btn-block btn-primary">
-																	<i className="fa fa-fw fa-sign-in-alt mr-1"></i> Login
-														</button>
+																<button type="submit" className="btn btn-block btn-primary" onClick={this.handleSubmit}><i className="fa fa-fw fa-sign-in-alt mr-1"></i> Login</button>
 															</div>
 														</div>
-													</form>
+													</div>
 												</div>
 											</div>
 										</div>

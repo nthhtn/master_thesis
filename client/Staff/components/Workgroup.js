@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import { listConversation, createConversation } from '../actions/Conversation';
+import { createConversation } from '../actions/Conversation';
+import { getWorkgroupDetails } from '../actions/Workgroup';
 
 let self;
 
@@ -13,16 +14,16 @@ class MemberItem extends Component {
 	}
 
 	render() {
+		const { memberName, memberEmail } = this.props;
 		return (
 			<li>
 				<a className="media py-2" href={undefined}>
 					<div className="mr-3 ml-2 overlay-container overlay-bottom">
 						<img className="img-avatar img-avatar48" src="/assets/oneui/media/avatars/avatar3.jpg" alt="" />
-						<span className="overlay-item item item-tiny item-circle border border-2x border-white bg-success"></span>
 					</div>
 					<div className="media-body">
-						<div className="font-w600">Lori Grant</div>
-						<div className="font-w400 text-muted">Web Designer</div>
+						<div className="font-w600">{memberName}</div>
+						<div className="font-w400 text-muted" style={{ wordBreak: 'break-all' }}>{memberEmail}</div>
 					</div>
 				</a>
 			</li>
@@ -39,6 +40,14 @@ class ConversationItem extends Component {
 	}
 
 	render() {
+		const { conversationId, conversationTitle, conversationCreatedAt,conversationCreator } = this.props;
+		const datetime = new Date(conversationCreatedAt);
+		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
+		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
+		const year = datetime.getFullYear();
+		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
+		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
+		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
 		return (
 			<tr>
 				<td className="text-center">
@@ -47,13 +56,13 @@ class ConversationItem extends Component {
 						<label className="custom-control-label font-w400" htmlFor="inbox-msg1"></label>
 					</div>
 				</td>
-				<td className="d-none d-sm-table-cell font-w600">Melissa Rice</td>
+				<td className="d-none d-sm-table-cell font-w600">{conversationCreator}</td>
 				<td>
-					<Link className="font-w600" to={`/conversations/${this.props.conversationId}`}>{this.props.conversationTitle}</Link>
+					<Link className="font-w600" to={`/conversations/${conversationId}`}>{conversationTitle}</Link>
 				</td>
 				<td className="d-none d-xl-table-cell text-muted"></td>
 				<td className="d-none d-xl-table-cell text-muted">
-					<em>{this.props.conversationCreatedAt}</em>
+					<em>{datestring}</em>
 				</td>
 			</tr>
 		);
@@ -65,27 +74,32 @@ export default class Workgroup extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = { workgroupId: this.props.match.params.id };
 		self = this;
 	}
 
-	componentDidMount() {
-		this.props.dispatch(listConversation());
+	async componentDidMount() {
+		const { workgroupId } = this.state;
+		this.props.dispatch(getWorkgroupDetails(workgroupId));
 	}
 
 	async createConversation() {
+		const { workgroupId } = self.state;
 		const title = $('#create-conversation-title').val().trim();
 		const content = $('#create-conversation-content').val().trim();
-		self.props.dispatch(createConversation({ title, content }));
+		self.props.dispatch(createConversation({ title, content, workgroupId }));
 	}
 
 	render() {
+		const { current } = this.props.workgroup;
+		const { name, members } = current;
+		const listConversation = this.props.conversation.list;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-							<h1 className="flex-sm-fill h3 my-2">Workgroup</h1>
+							<h1 className="flex-sm-fill h3 my-2">{name}</h1>
 						</div>
 					</div>
 				</div>
@@ -123,14 +137,16 @@ export default class Workgroup extends Component {
 														</div>
 														<div className="block-content block-content-full text-right border-top">
 															<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-															<button type="button" className="btn btn-sm btn-primary" data-dismiss="modal" onClick={this.createConversation}><i className="fa fa-check mr-1"></i>Ok</button>
+															<button type="button" className="btn btn-sm btn-primary" data-dismiss="modal"><i className="fa fa-check mr-1"></i>Ok</button>
 														</div>
 													</div>
 												</div>
 											</div>
 										</div>
 										<ul className="nav-items font-size-sm">
-											{[1, 2, 3, 4, 5].map((item) => <MemberItem key={item} />)}
+											{members.map((item) =>
+												<MemberItem key={item._id} memberName={item.firstName + ' ' + item.lastName} memberEmail={item.email} />)
+											}
 										</ul>
 									</div>
 								</div>
@@ -177,14 +193,15 @@ export default class Workgroup extends Component {
 											</div>
 										</div>
 									</div>
-									<div className="d-flex justify-content-between push">
-									</div>
+									<div className="d-flex justify-content-between push"></div>
 									<div className="pull-x">
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
-												{this.props.conversation.listConversation.map((item) =>
+												{listConversation.map((item) =>
 													<ConversationItem key={item._id} conversationId={item._id}
-														conversationTitle={item.title} conversationContent={item.content} conversationCreatedAt={item.createdAt} />
+														conversationTitle={item.title} conversationContent={item.content}
+														conversationCreatedAt={item.createdAt}
+														conversationCreator={item.creator.firstName + ' ' + item.creator.lastName} />
 												)}
 											</tbody>
 										</table>

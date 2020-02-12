@@ -1,3 +1,5 @@
+import { listConversationComment } from './ConversationComment';
+
 export function createConversation(conversation) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/conversations`, {
@@ -27,4 +29,19 @@ export function listConversation(query = {}) {
 
 export function listConversationSuccess(list) {
 	return { type: 'LIST_CONVERSATION', list };
+}
+
+
+export function getConversationDetails(id) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/conversations/${id}`, { credentials: 'same-origin' });
+		let responseJson = await response.json();
+		const conversation = responseJson.result;
+		dispatch(getConversationDetailsSuccess(conversation));
+		// dispatch(listConversationComment({ conversationId: id }));
+	};
+}
+
+export function getConversationDetailsSuccess(conversation) {
+	return { type: 'GET_CONVERSATION_DETAILS', conversation };
 }

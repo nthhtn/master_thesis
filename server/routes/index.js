@@ -9,6 +9,7 @@ module.exports = (app, db) => {
 
 	require('./staff/workgroup')(app, db);
 	require('./staff/conversation')(app, db);
+	require('./staff/conversationComment')(app, db);
 	require('./staff/task')(app, db);
 	require('./staff/user')(app, db);
 	require('./staff/index')(app, db);

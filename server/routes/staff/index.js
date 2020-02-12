@@ -7,8 +7,8 @@ module.exports = (app, db) => {
 	router.route('/me')
 		.get(async (req, res) => {
 			try {
-				const { firstName, lastName, email, phone, address, userType } = req.session.user;
-				const result = { firstName, lastName, email, phone, address, userType };
+				const { _id, firstName, lastName, email, phone, address, userType } = req.session.user;
+				const result = { _id, firstName, lastName, email, phone, address, userType };
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

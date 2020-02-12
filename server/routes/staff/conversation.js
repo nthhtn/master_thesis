@@ -25,6 +25,16 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/:id')
+		.get(async (req, res) => {
+			try {
+				const result = await Conversation.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	app.use('/api/conversations', router);
 
 };

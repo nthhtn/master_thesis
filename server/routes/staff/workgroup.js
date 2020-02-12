@@ -39,16 +39,6 @@ module.exports = (app, db) => {
 			}
 		});
 
-	router.route('/:id/members')
-		.get(async (req, res) => {
-			try {
-				const result = await WorkgroupMember.queryByFields({ idWorkgroup: req.params.id });
-				return res.json({ success: true, result });
-			} catch (error) {
-				return res.status(400).json({ success: false, error: error.message });
-			}
-		});
-
 	app.use('/api/workgroups', router);
 
 };

@@ -40,7 +40,7 @@ class ConversationItem extends Component {
 	}
 
 	render() {
-		const { conversationId, conversationTitle, conversationCreatedAt,conversationCreator } = this.props;
+		const { conversationId, conversationTitle, conversationCreatedAt, conversationCreator } = this.props;
 		const datetime = new Date(conversationCreatedAt);
 		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
 		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
@@ -52,8 +52,8 @@ class ConversationItem extends Component {
 			<tr>
 				<td className="text-center">
 					<div className="custom-control custom-checkbox">
-						<input type="checkbox" className="custom-control-input" id="inbox-msg1" name="inbox-msg1" />
-						<label className="custom-control-label font-w400" htmlFor="inbox-msg1"></label>
+						<input type="checkbox" className="custom-control-input" id={'btn-conv-' + conversationId} />
+						<label className="custom-control-label font-w400" htmlFor={'btn-conv-' + conversationId}></label>
 					</div>
 				</td>
 				<td className="d-none d-sm-table-cell font-w600">{conversationCreator}</td>
@@ -155,7 +155,7 @@ export default class Workgroup extends Component {
 						<div className="col-md-7 col-xl-9">
 							<div className="block">
 								<div className="block-header block-header-default">
-									<h3 className="block-title">List of Conversations</h3>
+									<h3 className="block-title">Conversations</h3>
 									<div className="block-options">
 										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation"><i className="fa fa-plus mr-1"></i> New Conversation</button>
 									</div>
@@ -166,7 +166,7 @@ export default class Workgroup extends Component {
 											<div className="modal-content">
 												<div className="block block-themed block-transparent mb-0">
 													<div className="block-header bg-primary-dark">
-														<h3 className="block-title">Modal Title</h3>
+														<h3 className="block-title">New Conversation</h3>
 														<div className="block-options">
 															<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
 																<i className="fa fa-fw fa-times"></i>
@@ -197,12 +197,13 @@ export default class Workgroup extends Component {
 									<div className="pull-x">
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
-												{listConversation.map((item) =>
-													<ConversationItem key={item._id} conversationId={item._id}
-														conversationTitle={item.title} conversationContent={item.content}
-														conversationCreatedAt={item.createdAt}
-														conversationCreator={item.creator.firstName + ' ' + item.creator.lastName} />
-												)}
+												{listConversation.map((item) => {
+													const { _id, title, content, createdAt, creator } = item;
+													const fullName = creator.firstName + ' ' + creator.lastName;
+													return (<ConversationItem key={_id} conversationId={_id}
+														conversationTitle={title} conversationContent={content}
+														conversationCreatedAt={createdAt} conversationCreator={fullName} />);
+												})}
 											</tbody>
 										</table>
 									</div>

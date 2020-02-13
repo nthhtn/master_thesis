@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-import { listConversationComment, addConversationComment } from '../actions/ConversationComment';
-import { getConversationDetails, getConversationDetailsSuccess } from '../actions/Conversation';
+import { getConversationDetails, getConversationDetailsSuccess, listConversationComment, addConversationComment }
+	from '../actions/Conversation';
 
 let self;
 
@@ -56,21 +56,21 @@ export default class Conversation extends Component {
 		let conversation = this.props.conversation.list.find((item) => item._id === conversationId);
 		conversation ? this.props.dispatch(getConversationDetailsSuccess(conversation))
 			: this.props.dispatch(getConversationDetails(conversationId));
-		this.props.dispatch(listConversationComment({ conversationId }));
+		this.props.dispatch(listConversationComment(conversationId));
 	}
 
 	async addComment() {
 		const { conversationId } = self.state;
 		const text = $('#comment-input').val();
 		const { _id, firstName, lastName } = self.props.user.me;
-		const comment = { text, conversationId, commenterId: _id };
-		await self.props.dispatch(addConversationComment(comment, { _id, firstName, lastName }));
+		const comment = { text };
+		await self.props.dispatch(addConversationComment(conversationId, comment, { _id, firstName, lastName }));
 		$('#comment-input').val('');
 	}
 
 	render() {
 		const { comments, current } = this.props.conversation;
-		const { title, content, createdAt } = current;
+		const { title, content, createdAt, creator } = current;
 		const { firstName, lastName } = this.props.user.me;
 		const datetime = new Date(createdAt);
 		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
@@ -101,7 +101,7 @@ export default class Conversation extends Component {
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ width: '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-											<p className="font-size-sm">Julian Green</p>
+											<p className="font-size-sm">{creator.firstName + ' ' + creator.lastName}</p>
 										</td>
 										<td>
 											<em>{datestring}</em>

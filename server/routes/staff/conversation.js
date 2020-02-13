@@ -1,11 +1,13 @@
 import express from 'express';
 
 import ConversationModel from '../../models/conversation';
+import ConversationCommentModel from '../../models/conversationComment';
 
 module.exports = (app, db) => {
 
 	const router = express.Router();
 	const Conversation = new ConversationModel(db);
+	const ConversationComment = new ConversationCommentModel(db);
 
 	router.route('/')
 		.get(async (req, res) => {
@@ -29,6 +31,24 @@ module.exports = (app, db) => {
 		.get(async (req, res) => {
 			try {
 				const result = await Conversation.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
+	router.route('/:id/comments')
+		.post(async (req, res) => {
+			try {
+				const result = await ConversationComment.create({ ...req.body, conversationId: req.params.id, creatorId: req.session.user._id });
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.get(async (req, res) => {
+			try {
+				const result = await ConversationComment.lookupByFields({ conversationId: req.params.id });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

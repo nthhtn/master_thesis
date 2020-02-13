@@ -25,6 +25,18 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/:id')
+		.get(async (req, res) => {
+			try {
+				const data = await User.read(req.params.id);
+				console.log(data);
+				const { _id, firstName, lastName, email } = data;
+				return res.json({ success: true, result: { _id, firstName, lastName, email } });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	app.use('/api/users', router);
 
 };

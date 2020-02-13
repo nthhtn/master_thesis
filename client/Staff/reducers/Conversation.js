@@ -1,6 +1,9 @@
 const initialState = {
 	list: [],
-	current: { _id: null, title: '', content: '', createdAt: null },
+	current: {
+		_id: null, title: '', content: '', createdAt: null,
+		creator: { _id: null, firstName: '', lastName: '', email: '' }
+	},
 	comments: []
 };
 

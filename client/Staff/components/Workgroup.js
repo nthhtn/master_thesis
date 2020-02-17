@@ -40,7 +40,7 @@ class ConversationItem extends Component {
 	}
 
 	render() {
-		const { conversationId, conversationTitle, conversationCreatedAt, conversationCreator } = this.props;
+		const { conversationId, conversationTitle, conversationCreatedAt, conversationContent, conversationCreator } = this.props;
 		const datetime = new Date(conversationCreatedAt);
 		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
 		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
@@ -50,19 +50,21 @@ class ConversationItem extends Component {
 		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
 		return (
 			<tr>
-				<td className="text-center">
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{conversationCreator}</td>
+				<td style={{ width: '20%' }}>
+					<Link className="font-w600" to={`/conversations/${conversationId}`}>{conversationTitle}</Link>
+				</td>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+					{conversationContent}
+				</td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
+					<em>{datestring}</em>
+				</td>
+				<td className="text-center" style={{ width: '5%' }}>
 					<div className="custom-control custom-checkbox">
 						<input type="checkbox" className="custom-control-input" id={'btn-conv-' + conversationId} />
 						<label className="custom-control-label font-w400" htmlFor={'btn-conv-' + conversationId}></label>
 					</div>
-				</td>
-				<td className="d-none d-sm-table-cell font-w600">{conversationCreator}</td>
-				<td>
-					<Link className="font-w600" to={`/conversations/${conversationId}`}>{conversationTitle}</Link>
-				</td>
-				<td className="d-none d-xl-table-cell text-muted"></td>
-				<td className="d-none d-xl-table-cell text-muted">
-					<em>{datestring}</em>
 				</td>
 			</tr>
 		);

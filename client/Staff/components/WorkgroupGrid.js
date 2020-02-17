@@ -13,18 +13,32 @@ class WorkgroupGridItem extends Component {
 	}
 
 	render() {
+		const titleStyle = {
+			whiteSpace: 'nowrap',
+			overflow: 'hidden',
+			textOverflow: 'ellipsis'
+		};
+		const textStyle = {
+			...titleStyle,
+			height: '87px',
+			whiteSpace: 'pre-wrap'
+		}
 		const { workgroupId, workgroupName, workgroupDescription } = this.props;
 		return (
 			<div className="col-sm-6 col-xl-4">
 				<div className="block">
 					<div className="block-header">
-						<Link to={`/workgroups/${workgroupId}`}><h3 className="block-title">{workgroupName}</h3></Link>
+						<Link to={`/workgroups/${workgroupId}`} style={titleStyle}>
+							<h3 className="block-title">
+								{workgroupName}
+							</h3>
+						</Link>
 					</div>
 					<div className="block-content block-content-full text-center">
 						<img className="img-avatar img-avatar96 img-avatar-thumb" src="/assets/oneui/media/avatars/avatar12.jpg" alt="" />
 					</div>
-					<div className="block-content font-size-sm">
-						<p>{workgroupDescription}</p>
+					<div className="block-content font-size-sm" style={textStyle}>
+						{workgroupDescription}
 					</div>
 				</div>
 			</div>
@@ -64,7 +78,7 @@ export default class WorkgroupGrid extends Component {
 									<div className="modal-content">
 										<div className="block block-themed block-transparent mb-0">
 											<div className="block-header bg-primary-dark">
-												<h3 className="block-title">Modal Title</h3>
+												<h3 className="block-title">Create Workgroup</h3>
 												<div className="block-options">
 													<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
 														<i className="fa fa-fw fa-times"></i>

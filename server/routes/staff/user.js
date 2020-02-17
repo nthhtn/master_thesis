@@ -29,7 +29,6 @@ module.exports = (app, db) => {
 		.get(async (req, res) => {
 			try {
 				const data = await User.read(req.params.id);
-				console.log(data);
 				const { _id, firstName, lastName, email } = data;
 				return res.json({ success: true, result: { _id, firstName, lastName, email } });
 			} catch (error) {

@@ -1,4 +1,4 @@
-export function createConversation(conversation) {
+export function createConversation(conversation, creator) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/conversations`, {
 			credentials: 'same-origin',
@@ -7,7 +7,8 @@ export function createConversation(conversation) {
 			body: JSON.stringify(conversation)
 		});
 		const responseJson = await response.json();
-		dispatch(createConversationSuccess(responseJson.result));
+		const result = { ...responseJson.result, creator };
+		dispatch(createConversationSuccess(result));
 	};
 };
 

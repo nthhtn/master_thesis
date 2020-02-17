@@ -43,5 +43,3 @@ MongoClient.connect(db_url, async (err, client) => {
 	// require('./server/helpers/init')(db);
 	app.listen(port, () => console.log(`App is listening on port ${port}`));
 });
-
-

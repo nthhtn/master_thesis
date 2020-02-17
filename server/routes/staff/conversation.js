@@ -40,7 +40,8 @@ module.exports = (app, db) => {
 	router.route('/:id/comments')
 		.post(async (req, res) => {
 			try {
-				const result = await ConversationComment.create({ ...req.body, conversationId: req.params.id, creatorId: req.session.user._id });
+				const data = { ...req.body, conversationId: req.params.id, creatorId: req.session.user._id };
+				const result = await ConversationComment.create(data);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

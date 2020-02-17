@@ -60,8 +60,9 @@ export default class Conversation extends Component {
 	}
 
 	async addComment() {
-		const { conversationId } = self.state;
 		const text = $('#comment-input').val();
+		if (text === '') { return; }
+		const { conversationId } = self.state;
 		const { _id, firstName, lastName } = self.props.user.me;
 		const comment = { text };
 		await self.props.dispatch(addConversationComment(conversationId, comment, { _id, firstName, lastName }));

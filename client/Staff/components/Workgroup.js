@@ -85,9 +85,18 @@ export default class Workgroup extends Component {
 
 	async createConversation() {
 		const { workgroupId } = self.state;
-		const title = $('#create-conversation-title').val().trim();
-		const content = $('#create-conversation-content').val().trim();
-		self.props.dispatch(createConversation({ title, content, workgroupId }));
+		const title = $('#create-conversation-title').val();
+		const content = $('#create-conversation-content').val();
+		if (title === '' || content === '') {
+			$('#create-conversation-error').text('All fields must not be empty!');
+			return;
+		}
+		$('#create-conversation-error').text('');
+		const { _id, firstName, lastName } = self.props.user.me;
+		await self.props.dispatch(createConversation({ title, content, workgroupId }, { _id, firstName, lastName }));
+		$('#modal-create-conversation input').val('');
+		$('#modal-create-conversation textarea').val('');
+		$('#modal-create-conversation').modal('hide');
 	}
 
 	render() {
@@ -183,11 +192,14 @@ export default class Workgroup extends Component {
 																<label htmlFor="create-conversation-content">Content</label>
 																<textarea rows="4" className="form-control" id="create-conversation-content" />
 															</div>
+															<div className="form-group col-sm-12">
+																<label id="create-conversation-error" style={{ color: 'red' }}></label>
+															</div>
 														</div>
 													</div>
 													<div className="block-content block-content-full text-right border-top">
 														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-														<button type="button" className="btn btn-sm btn-primary" data-dismiss="modal" onClick={this.createConversation}><i className="fa fa-check mr-1"></i>Ok</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check mr-1"></i>Ok</button>
 													</div>
 												</div>
 											</div>

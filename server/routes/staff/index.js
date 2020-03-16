@@ -7,7 +7,7 @@ module.exports = (app, db) => {
 	router.route('/me')
 		.get(async (req, res) => {
 			try {
-				const { _id, firstName, lastName, email, phone, address, userType } = req.session.user;
+				const { _id, firstName, lastName, email, phone, address, userType } = req.user;
 				const result = { _id, firstName, lastName, email, phone, address, userType };
 				return res.json({ success: true, result });
 			} catch (error) {

@@ -53,6 +53,18 @@ store.dispatch(getMyProfile()).then(() => {
 												<span className="nav-main-link-name">Tasks</span>
 											</Link>
 										</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/tickets">
+												<i className="nav-main-link-icon fa fa-ticket-alt"></i>
+												<span className="nav-main-link-name">Tickets</span>
+											</Link>
+										</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/customers">
+												<i className="nav-main-link-icon fa fa-user-tie"></i>
+												<span className="nav-main-link-name">Customers</span>
+											</Link>
+										</li>
 									</ul>
 								</div>
 							</div>
@@ -72,7 +84,7 @@ store.dispatch(getMyProfile()).then(() => {
 								</button>
 								<div className="d-none d-sm-inline-block">
 									<div className="input-group input-group-sm">
-										<input type="text" className="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2"/>
+										<input type="text" className="form-control form-control-alt" placeholder="Search.." id="page-header-search-input2" />
 										<div className="input-group-append">
 											<span className="input-group-text bg-body border-0">
 												<i className="si si-magnifier"></i>

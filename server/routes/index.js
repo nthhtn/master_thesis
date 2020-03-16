@@ -10,17 +10,20 @@ module.exports = (app, db) => {
 	require('./staff/workgroup')(app, db);
 	require('./staff/conversation')(app, db);
 	require('./staff/task')(app, db);
+	require('./staff/customer')(app, db);
+	require('./staff/ticket')(app, db);
 	require('./staff/user')(app, db);
 	require('./staff/index')(app, db);
 
 	app.route('/logout')
 		.get((req, res) => {
-			return req.session.destroy(() => res.sendFile(path.resolve(`${__dirname}/../views/guest.html`)));
+			if (req.isAuthenticated()) { req.logOut(); }
+			return res.sendFile(path.resolve(`${__dirname}/../views/guest.html`));
 		});
 
 	app.route('*')
 		.get((req, res) => {
-			const viewpath = req.session.user ? `${__dirname}/../views/staff.html` : `${__dirname}/../views/guest.html`;
+			const viewpath = req.isAuthenticated() ? `${__dirname}/../views/staff.html` : `${__dirname}/../views/guest.html`;
 			return res.sendFile(path.resolve(viewpath));
 		});
 

@@ -26,7 +26,7 @@ export default class WorkgroupMemberModel {
 	async createMany(list) {
 		list = list.map((item) => ({ ...item, _id: new ObjectID().toString() }));
 		try {
-			await this._db.collection(this._table).insertMany(list);
+			await this._db.collection(this._table).insertMany(list, { ordered: false });
 			return Promise.resolve(list);
 		} catch (error) {
 			return Promise.reject(error.message);
@@ -67,7 +67,7 @@ export default class WorkgroupMemberModel {
 		}
 	}
 
-	async lookupMembersByWorkgroup(workgroupId) {
+	async lookupMembersByWorkgroup(filter_options) {
 		const lookup = {
 			from: 'user',
 			let: { memberId: '$userId' },
@@ -77,12 +77,11 @@ export default class WorkgroupMemberModel {
 			],
 			as: 'members'
 		};
-		const aggregate = [{ $match: { workgroupId } }, { $lookup: lookup }];
+		const aggregate = [{ $match: filter_options }, { $lookup: lookup }];
 		try {
 			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return result[0];
 		} catch (error) {
-			console.log(error);
 			return Promise.reject(error.message);
 		}
 	}

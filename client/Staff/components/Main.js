@@ -3,9 +3,12 @@ import { Switch, Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import IndexPage from './IndexPage';
-import WorkgroupGrid from './WorkgroupGrid';
-import Conversation from './Conversation';
 import Workgroup from './Workgroup';
+import Conversation from './Conversation';
+import WorkgroupDetails from './WorkgroupDetails';
+import Customer from './Customer';
+import CustomerDetails from './CustomerDetails';
+import Ticket from './Ticket';
 
 class Main extends Component {
 
@@ -19,11 +22,17 @@ class Main extends Component {
 			<Switch>
 				<Route path='/dashboard' component={IndexPage} />
 				<Route exact path='/workgroups'
-					render={() => <WorkgroupGrid {...this.props} />} />
+					render={() => <Workgroup {...this.props} />} />
 				<Route path='/workgroups/:id'
-					render={(props) => <Workgroup {...this.props} {...props} />} />
+					render={(props) => <WorkgroupDetails {...this.props} {...props} />} />
 				<Route exact path='/conversations/:id'
 					render={(props) => <Conversation {...this.props} {...props} />} />
+				<Route exact path='/customers'
+					render={() => <Customer {...this.props} />} />
+				<Route exact path='/customers/:id'
+					render={(props) => <CustomerDetails {...this.props} {...props} />} />
+				<Route exact path='/tickets'
+					render={() => <Ticket {...this.props} />} />
 				<Route path='*' component={IndexPage} />
 			</Switch>
 		);

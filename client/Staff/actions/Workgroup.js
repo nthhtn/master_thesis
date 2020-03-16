@@ -42,3 +42,21 @@ export function getWorkgroupDetails(id) {
 export function getWorkgroupDetailsSuccess(workgroup) {
 	return { type: 'GET_WORKGROUP_DETAILS', workgroup };
 }
+
+export function addWorkgroupMembers(emails) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/workgroups`, {
+			credentials: 'same-origin',
+			method: 'post',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ list: emails })
+		});
+		let responseJson = await response.json();
+		const members = responseJson.result;
+		dispatch(addWorkgroupMembersSuccess(members));
+	};
+}
+
+export function addWorkgroupMembersSuccess(members) {
+	return { type: 'ADD_WORKGROUP_MEMBERS', members };
+}

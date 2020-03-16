@@ -1,4 +1,5 @@
 const initialState = {
+	list: [],
 	me: { firstName: '', lastName: '', email: '', phone: '', address: '', userType: '' }
 };
 

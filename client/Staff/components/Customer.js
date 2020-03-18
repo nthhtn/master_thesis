@@ -12,10 +12,14 @@ class CustomerItem extends Component {
 		this.state = {};
 	}
 
+	handleClick() {
+		this.props.history.push(`/customers/${this.props._id}`);
+	}
+
 	render() {
 		const { fullname, email, phone, address, note, _id } = this.props;
 		return (
-			<tr style={{ cursor: 'pointer' }}>
+			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td className="font-w600 font-size-sm">
 					<Link className="font-w600" to={`/customers/${_id}`}>{fullname}</Link>
 				</td>
@@ -103,7 +107,7 @@ export default class Customer extends Component {
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="create-customer-phone">Phone</label>
-														<input type="text" className="form-control" id="create-customer-content" />
+														<input type="text" className="form-control" id="create-customer-phone" />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="create-customer-address">Address</label>
@@ -126,7 +130,6 @@ export default class Customer extends Component {
 									</div>
 								</div>
 							</div>
-
 							<div className="table-responsive">
 								<table className="table table-bordered table-striped table-vcenter">
 									<thead>
@@ -141,8 +144,8 @@ export default class Customer extends Component {
 									<tbody>
 										{
 											listCustomer.map((item) => {
-												const { _id, fullname, email, phone, address, note } = item;
-												return (<CustomerItem key={_id} {...item} />);
+												const { _id } = item;
+												return (<CustomerItem key={_id} {...item} history={self.props.history} />);
 											})
 										}
 									</tbody>

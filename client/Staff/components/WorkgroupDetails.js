@@ -82,7 +82,7 @@ export default class WorkgroupDetails extends Component {
 
 	async componentDidMount() {
 		const { workgroupId } = this.state;
-		this.props.dispatch(getWorkgroupDetails(workgroupId));
+		await this.props.dispatch(getWorkgroupDetails(workgroupId));
 	}
 
 	async createConversation() {

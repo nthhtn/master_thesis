@@ -28,7 +28,7 @@ class Main extends Component {
 				<Route exact path='/conversations/:id'
 					render={(props) => <Conversation {...this.props} {...props} />} />
 				<Route exact path='/customers'
-					render={() => <Customer {...this.props} />} />
+					render={(props) => <Customer {...this.props} {...props} />} />
 				<Route exact path='/customers/:id'
 					render={(props) => <CustomerDetails {...this.props} {...props} />} />
 				<Route exact path='/tickets'

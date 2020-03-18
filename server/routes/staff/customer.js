@@ -25,6 +25,33 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/:id')
+		.get(async (req, res) => {
+			try {
+				const result = await Customer.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.put(async (req, res) => {
+			try {
+				const result = await Customer.update(req.params.id, req.body);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.delete(async (req, res) => {
+			try {
+				const result = await Customer.delete(req.params.id);
+				console.log(result);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	app.use('/api/customers', router);
 
 };

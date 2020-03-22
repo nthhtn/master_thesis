@@ -1,9 +1,45 @@
 import React, { Component } from 'react';
 import Swal from 'sweetalert2';
+import { Link } from 'react-router-dom';
 
 let self;
 
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
+import { createTicket, listTicket } from '../actions/Ticket';
+
+class TicketItem extends Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	render() {
+		const { _id, title, message, createdAt } = this.props;
+		const datetime = new Date(createdAt);
+		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
+		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
+		const year = datetime.getFullYear();
+		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
+		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
+		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
+		return (
+			<tr>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>The man</td>
+				<td style={{ width: '20%' }}>
+					<Link className="font-w600" to={`/tickets/:id`}>{title}</Link>
+				</td>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+					{message}
+				</td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
+					<em>{datestring}</em>
+				</td>
+			</tr>
+		);
+	}
+
+}
 
 export default class CustomerDetails extends Component {
 
@@ -23,6 +59,7 @@ export default class CustomerDetails extends Component {
 		$('#update-customer-phone').val(phone);
 		$('#update-customer-address').val(address);
 		$('#update-customer-note').val(note);
+		await this.props.dispatch(listTicket());
 	}
 
 	async updateCustomer() {
@@ -68,7 +105,23 @@ export default class CustomerDetails extends Component {
 		})
 	}
 
+	async createTicket() {
+		const title = $('#create-ticket-title').val();
+		const message = $('#create-ticket-message').val();
+		if (!title || !message) {
+			$('#create-ticket-error').text('All fields must not be empty');
+			return;
+		}
+		const data = { title, message, ownerId: self.state.customerId };
+		await self.props.dispatch(createTicket(data));
+		$('#create-ticket-error').text('');
+		$('#modal-create-ticket input').val('');
+		$('#modal-create-ticket textarea').val('');
+		$('#modal-create-ticket').modal('hide');
+	}
+
 	render() {
+		const list = this.props.ticket.list;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -144,12 +197,12 @@ export default class CustomerDetails extends Component {
 													<div className="block-content font-size-sm">
 														<div className="row">
 															<div className="form-group col-sm-12">
-																<label htmlFor="create-ticket-title">Title</label>
+																<label htmlFor="create-ticket-title">Title*</label>
 																<input type="text" className="form-control" id="create-ticket-title" />
 															</div>
 															<div className="form-group col-sm-12">
-																<label htmlFor="create-ticket-content">Content</label>
-																<textarea rows="4" className="form-control" id="create-ticket-content" />
+																<label htmlFor="create-ticket-message">Message*</label>
+																<textarea rows="4" className="form-control" id="create-ticket-message" />
 															</div>
 															<div className="form-group col-sm-12">
 																<label id="create-ticket-error" style={{ color: 'red' }}></label>
@@ -158,7 +211,7 @@ export default class CustomerDetails extends Component {
 													</div>
 													<div className="block-content block-content-full text-right border-top">
 														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-														<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check mr-1"></i>Ok</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check mr-1"></i>Ok</button>
 													</div>
 												</div>
 											</div>
@@ -168,6 +221,9 @@ export default class CustomerDetails extends Component {
 									<div className="pull-x">
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
+												{list.map((item) => {
+													return (<TicketItem key={item._id} {...item} />)
+												})}
 											</tbody>
 										</table>
 									</div>

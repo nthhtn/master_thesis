@@ -1,28 +1,23 @@
 import { ObjectID } from 'mongodb';
 
-// let ticket = {
+// let ticketComment = {
 // 	_id: 'string',
-// 	title: 'string',
-// 	message: 'string',
-// 	status: 'string',
-// 	ownerId: 'string',
-// 	assigneeId: 'string',
-// 	issueId: 'string',
-// 	sectorId: 'string'
+// 	text: 'string',
+// 	ticketId: 'string',
+// 	commenterId: 'string'
 // };
 
-export default class TicketModel {
+export default class TicketCommentModel {
 
 	constructor(db) {
 		this._db = db;
-		this._table = 'ticket';
+		this._table = 'ticketComment';
 	}
 
 	async create(data) {
 		data._id = new ObjectID().toString();
 		const datetime = Date.now();
 		data.createdAt = datetime;
-		data.updatedAt = datetime;
 		try {
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);
@@ -68,27 +63,16 @@ export default class TicketModel {
 	}
 
 	async lookupByFields(fields = {}) {
-		const lookupOwner = {
-			from: 'customer',
-			let: { ownerId: '$ownerId' },
-			pipeline: [
-				{ $match: { $expr: { $eq: ['$_id', '$$ownerId'] } } },
-				{ $project: { fullname: 1, email: 1 } }
-			],
-			as: 'owner'
-		};
-		const lookupAssignee = {
+		const lookup = {
 			from: 'user',
-			let: { assigneeId: '$assigneeId' },
+			let: { commenterId: '$commenterId' },
 			pipeline: [
-				{ $match: { $expr: { $eq: ['$_id', '$$assigneeId'] } } },
+				{ $match: { $expr: { $eq: ['$_id', '$$commenterId'] } } },
 				{ $project: { firstName: 1, lastName: 1, email: 1 } }
 			],
-			as: 'assignee'
+			as: 'commenter'
 		};
-		const aggregate = [{ $match: fields },
-		{ $lookup: lookupOwner }, { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
-		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } }];
+		const aggregate = [{ $match: fields }, { $lookup: lookup }, { $unwind: { path: '$commenter' } }];
 		try {
 			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return await result;

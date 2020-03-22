@@ -7,6 +7,7 @@ export default function (state = initialState, action) {
 	switch (action.type) {
 		case 'CREATE_CUSTOMER': return { ...state, list: [action.conversation, ...state.list] };
 		case 'LIST_CUSTOMER': return { ...state, list: action.list };
+		case 'GET_CUSTOMER': return { ...state, current: action.customer };
 		case 'UPDATE_CUSTOMER': return {
 			...state,
 			list: state.list.map((item) => item.id === action.id ? { ...item, ...action.data } : item),

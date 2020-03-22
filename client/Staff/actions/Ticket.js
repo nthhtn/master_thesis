@@ -15,9 +15,11 @@ export function createTicketSuccess(ticket) {
 	return { type: 'CREATE_TICKET', ticket };
 }
 
-export function listTicket() {
+export function listTicket(query = {}) {
 	return async (dispatch) => {
-		const response = await fetch(`/api/tickets`, { credentials: 'same-origin' });
+		const queryString = Object.keys(query).map((key) => (key + '=' + query[key])).join('&');
+		const url = '/api/tickets' + (Object.keys(query).length > 0 ? '?' + queryString : '');
+		const response = await fetch(url, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listTicketSuccess(responseJson.result));
 	}

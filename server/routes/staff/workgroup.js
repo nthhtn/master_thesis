@@ -52,6 +52,15 @@ module.exports = (app, db) => {
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}
+		})
+		.get(async (req, res) => {
+			try {
+				const result = await WorkgroupMember.lookupMembersByWorkgroup({ workgroupId: req.params.id });
+				console.log(result);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
 		});
 
 	app.use('/api/workgroups', router);

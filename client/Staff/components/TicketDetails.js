@@ -35,6 +35,7 @@ export default class Ticket extends Component {
 	}
 
 	render() {
+		const { current } = this.props.ticket;
 		const { firstName, lastName } = this.props.user.me;
 		return (
 			<main id="main-container">

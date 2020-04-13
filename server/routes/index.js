@@ -15,6 +15,8 @@ module.exports = (app, db) => {
 	require('./staff/user')(app, db);
 	require('./staff/index')(app, db);
 
+	require('./manager/ticketSector')(app, db);
+
 	app.route('/logout')
 		.get((req, res) => {
 			if (req.isAuthenticated()) { req.logOut(); }

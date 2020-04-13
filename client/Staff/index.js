@@ -29,6 +29,7 @@ store.dispatch(getMyProfile()).then(() => {
 								</div>
 								<div className="content-side content-side-full">
 									<ul className="nav-main">
+										<li className="nav-main-heading">Staff Features</li>
 										<li className="nav-main-item">
 											<Link className="nav-main-link active" to="/dashboard">
 												<i className="nav-main-link-icon fa fa-globe"></i>
@@ -63,6 +64,13 @@ store.dispatch(getMyProfile()).then(() => {
 											<Link className="nav-main-link active" to="/customers">
 												<i className="nav-main-link-icon fa fa-user-tie"></i>
 												<span className="nav-main-link-name">Customers</span>
+											</Link>
+										</li>
+										<li className="nav-main-heading">Manager Features</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/ticketsectors">
+												<i className="nav-main-link-icon fa fa-layer-group"></i>
+												<span className="nav-main-link-name">Ticket Sectors</span>
 											</Link>
 										</li>
 									</ul>

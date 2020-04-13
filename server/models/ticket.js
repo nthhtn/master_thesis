@@ -86,9 +86,19 @@ export default class TicketModel {
 			],
 			as: 'assignee'
 		};
+		const lookupSector = {
+			from: 'ticketSector',
+			let: { sectorId: '$sectorId' },
+			pipeline: [
+				{ $match: { $expr: { $eq: ['$_id', '$$sectorId'] } } },
+				{ $project: { name: 1 } }
+			],
+			as: 'sector'
+		};
 		const aggregate = [{ $match: fields },
 		{ $lookup: lookupOwner }, { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
-		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } }];
+		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } },
+		{ $lookup: lookupSector }, { $unwind: { path: '$sector', preserveNullAndEmptyArrays: true } }];
 		try {
 			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return await result;

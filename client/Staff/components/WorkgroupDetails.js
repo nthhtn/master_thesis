@@ -40,8 +40,8 @@ class ConversationItem extends Component {
 	}
 
 	render() {
-		const { conversationId, conversationTitle, conversationCreatedAt, conversationContent, conversationCreator } = this.props;
-		const datetime = new Date(conversationCreatedAt);
+		const { _id, title, content, createdAt, creator } = this.props;
+		const datetime = new Date(createdAt);
 		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
 		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
 		const year = datetime.getFullYear();
@@ -50,20 +50,20 @@ class ConversationItem extends Component {
 		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
 		return (
 			<tr>
-				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{conversationCreator}</td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{creator.firstName + ' ' + creator.lastName}</td>
 				<td style={{ width: '20%' }}>
-					<Link className="font-w600" to={`/conversations/${conversationId}`}>{conversationTitle}</Link>
+					<Link className="font-w600" to={`/conversations/${_id}`}>{title}</Link>
 				</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-					{conversationContent}
+					{content}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{datestring}</em>
 				</td>
 				<td className="text-center" style={{ width: '5%' }}>
 					<div className="custom-control custom-checkbox">
-						<input type="checkbox" className="custom-control-input" id={'btn-conv-' + conversationId} />
-						<label className="custom-control-label font-w400" htmlFor={'btn-conv-' + conversationId}></label>
+						<input type="checkbox" className="custom-control-input" id={'btn-conv-' + _id} />
+						<label className="custom-control-label font-w400" htmlFor={'btn-conv-' + _id}></label>
 					</div>
 				</td>
 			</tr>
@@ -168,7 +168,7 @@ export default class WorkgroupDetails extends Component {
 								<div className="block-header block-header-default">
 									<h3 className="block-title">Conversations</h3>
 									<div className="block-options">
-										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation"><i className="fa fa-plus mr-1"></i> New Conversation</button>
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation"><i className="fa fa-plus mr-1"></i></button>
 									</div>
 								</div>
 								<div className="block-content">
@@ -212,11 +212,8 @@ export default class WorkgroupDetails extends Component {
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
 												{listConversation.map((item) => {
-													const { _id, title, content, createdAt, creator } = item;
-													const fullName = creator.firstName + ' ' + creator.lastName;
-													return (<ConversationItem key={_id} conversationId={_id}
-														conversationTitle={title} conversationContent={content}
-														conversationCreatedAt={createdAt} conversationCreator={fullName} />);
+													const { _id } = item;
+													return (<ConversationItem key={_id} {...item} />);
 												})}
 											</tbody>
 										</table>

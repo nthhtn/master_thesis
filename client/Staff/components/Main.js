@@ -10,6 +10,7 @@ import Customer from './Customer';
 import CustomerDetails from './CustomerDetails';
 import TicketDetails from './TicketDetails';
 import Ticket from './Ticket';
+import TicketSector from './TicketSector';
 
 class Main extends Component {
 
@@ -36,6 +37,8 @@ class Main extends Component {
 					render={(props) => <Ticket {...this.props} {...props} />} />
 				<Route exact path='/tickets/:id'
 					render={(props) => <TicketDetails {...this.props} {...props} />} />
+				<Route exact path='/ticketsectors'
+					render={() => <TicketSector {...this.props} />} />
 				<Route path='*' component={IndexPage} />
 			</Switch>
 		);

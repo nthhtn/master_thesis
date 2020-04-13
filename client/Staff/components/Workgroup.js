@@ -72,7 +72,9 @@ export default class Workgroup extends Component {
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
 							<h1 className="flex-sm-fill h3 my-2">List of Workgroups</h1>
-							<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-workgroup"><i className="fa fa-plus mr-1"></i> New Workgroup</button>
+							<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-workgroup">
+								<i className="fa fa-plus mr-1"></i> New
+							</button>
 							<div className="modal fade" id="modal-create-workgroup" tabIndex="-1" role="dialog" aria-labelledby="modal-create-workgroup" aria-modal="true" style={{ paddingRight: '15px' }}>
 								<div className="modal-dialog" role="document">
 									<div className="modal-content">

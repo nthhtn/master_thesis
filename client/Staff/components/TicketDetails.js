@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import { getTicketDetails } from '../actions/Ticket';
+import { toDateString } from '../helpers';
+
 let self;
 
 class CommentItem extends Component {
@@ -30,19 +33,25 @@ export default class Ticket extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = { ticketId: this.props.match.params.id };
 		self = this;
+	}
+
+	async componentDidMount() {
+		const { ticketId } = this.state;
+		await this.props.dispatch(getTicketDetails(ticketId));
 	}
 
 	render() {
 		const { current } = this.props.ticket;
+		const { owner, title, message, createdAt } = current;
 		const { firstName, lastName } = this.props.user.me;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-							<h1 className="flex-sm-fill h3 my-2">Ticket</h1>
+							<h1 className="flex-sm-fill h3 my-2">{title}</h1>
 							<div className="block-options">
 								<a className="btn-block-option mr-2 js-scroll-to-enabled" href="#comment-input" data-toggle="scroll-to">
 									<i className="fa fa-reply mr-1"></i> Reply
@@ -59,11 +68,11 @@ export default class Ticket extends Component {
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ width: '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-											<p className="font-size-sm">Unknown</p>
+											<p className="font-size-sm">{owner.fullname}</p>
 										</td>
 										<td>
 											<em>Unknown</em>
-											<p>Unknown</p>
+											<p>{message}</p>
 										</td>
 									</tr>
 								</tbody>

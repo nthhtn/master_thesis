@@ -1,7 +1,8 @@
 const initialState = {
 	list: [],
 	current: {
-		id: null, title: '', message: '', createdAt: null
+		id: null, title: '', message: '', createdAt: null,
+		owner: { email: '', fullname: '' }
 	},
 	comments: []
 };
@@ -12,6 +13,7 @@ export default function (state = initialState, action) {
 		case 'LIST_TICKET': return { ...state, list: action.list };
 		case 'LIST_TICKET_COMMENT': return { ...state, comments: action.comments };
 		case 'ADD_TICKET_COMMENT': return { ...state, comments: [...state.comments, action.comment] };
+		case 'GET_TICKET_DETAILS': return { ...state, current: action.ticket };
 		default: return state;
 	}
 };

@@ -30,7 +30,9 @@ class TicketItem extends Component {
 				<td className="font-w600 font-size-sm">
 					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
 				</td>
-				<td className="font-size-sm">{message}</td>
+				<td className="font-size-sm" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+					{message}
+				</td>
 				<td>{status}</td>
 				<td>{owner.fullname}</td>
 				<td>{assignee}</td>
@@ -114,7 +116,7 @@ export default class Ticket extends Component {
 														<textarea rows="4" className="form-control" id="create-ticket-message" />
 													</div>
 													<div className="form-group col-sm-6">
-														<label for="create-ticket-status">Status</label>
+														<label htmlFor="create-ticket-status">Status</label>
 														<select className="form-control" id="create-ticket-status">
 															<option value="0">Please select</option>
 															<option value="open">Open</option>
@@ -125,7 +127,7 @@ export default class Ticket extends Component {
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
-														<label for="create-ticket-sector">Sector</label>
+														<label htmlFor="create-ticket-sector">Sector</label>
 														<select className="form-control" id="create-ticket-sector">
 															<option value="0">Please select</option>
 															<option value="1">Option #1</option>

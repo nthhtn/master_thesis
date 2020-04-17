@@ -28,3 +28,19 @@ export function listTicket(query = {}) {
 export function listTicketSuccess(list) {
 	return { type: 'LIST_TICKET', list };
 }
+
+export function getTicketDetails(id) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/tickets/${id}`, { credentials: 'same-origin' });
+		let responseJson = await response.json();
+		const ticket = responseJson.result;
+		response = await fetch(`/api/customers/${ticket.ownerId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const owner = responseJson.result;
+		dispatch(getTicketDetailsSuccess({ ...ticket, owner }));
+	};
+}
+
+export function getTicketDetailsSuccess(ticket) {
+	return { type: 'GET_TICKET_DETAILS', ticket };
+}

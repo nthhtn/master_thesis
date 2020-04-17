@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { getConversationDetails, getConversationDetailsSuccess, listConversationComment, addConversationComment }
 	from '../actions/Conversation';
+import { toDateString } from '../helpers';
 
 let self;
 
@@ -13,24 +14,16 @@ class CommentItem extends Component {
 	}
 
 	render() {
-		const { commentText, commenter, createdAt } = this.props;
-		const datetime = new Date(createdAt);
-		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
-		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
-		const year = datetime.getFullYear();
-		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
-		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
-		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
-		const fullName = commenter.firstName + ' ' + commenter.lastName;
+		const { text, commenter, createdAt } = this.props;
 		return (
 			<tr>
 				<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
 					<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-					<p className="font-size-sm">{fullName}</p>
+					<p className="font-size-sm">{commenter.firstName + ' ' + commenter.lastName}</p>
 				</td>
 				<td>
-					<em>{datestring}</em>
-					<p>{commentText}</p>
+					<em>{toDateString(createdAt)}</em>
+					<p>{text}</p>
 				</td>
 			</tr>
 		);
@@ -119,9 +112,9 @@ export default class Conversation extends Component {
 						<div className="block-content">
 							<table className="table table-borderless">
 								<tbody>
-									{comments.map((item, i) => {
-										const { text, commenter, createdAt } = item;
-										return (<CommentItem key={i} commentText={text} commenter={commenter} createdAt={createdAt} />);
+									{comments.map((item) => {
+										const {_id}=item;
+										return (<CommentItem key={_id} {...item} />);
 									})}
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>

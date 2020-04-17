@@ -6,6 +6,7 @@ let self;
 
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
 import { createTicket, listTicket } from '../actions/Ticket';
+import { toDateString } from '../helpers';
 
 class TicketItem extends Component {
 
@@ -16,13 +17,6 @@ class TicketItem extends Component {
 
 	render() {
 		const { _id, title, message, createdAt } = this.props;
-		const datetime = new Date(createdAt);
-		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
-		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
-		const year = datetime.getFullYear();
-		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
-		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
-		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
 		return (
 			<tr>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>The man</td>
@@ -33,7 +27,7 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
-					<em>{datestring}</em>
+					<em>{toDateString(createdAt)}</em>
 				</td>
 			</tr>
 		);

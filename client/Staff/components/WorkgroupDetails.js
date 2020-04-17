@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { createConversation } from '../actions/Conversation';
 import { getWorkgroupDetails } from '../actions/Workgroup';
+import { toDateString } from '../helpers';
 
 let self;
 
@@ -41,13 +42,6 @@ class ConversationItem extends Component {
 
 	render() {
 		const { _id, title, content, createdAt, creator } = this.props;
-		const datetime = new Date(createdAt);
-		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
-		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
-		const year = datetime.getFullYear();
-		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
-		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
-		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
 		return (
 			<tr>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{creator.firstName + ' ' + creator.lastName}</td>
@@ -58,7 +52,7 @@ class ConversationItem extends Component {
 					{content}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
-					<em>{datestring}</em>
+					<em>{toDateString(createdAt)}</em>
 				</td>
 				<td className="text-center" style={{ width: '5%' }}>
 					<div className="custom-control custom-checkbox">

@@ -23,7 +23,7 @@ module.exports = (app, db) => {
 		.post(async (req, res) => {
 			try {
 				const result = await Workgroup.create(req.body);
-				await WorkgroupMember.create({ workgroupId: result._id, userId: req.session.user._id });
+				await WorkgroupMember.create({ workgroupId: result._id, userId: req.user._id });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

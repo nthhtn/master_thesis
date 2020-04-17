@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { getTicketDetails } from '../actions/Ticket';
+import { getTicketDetails, getTicketDetailsSuccess, addTicketComment, listTicketComment } from '../actions/Ticket';
 import { toDateString } from '../helpers';
 
 let self;
@@ -13,15 +13,16 @@ class CommentItem extends Component {
 	}
 
 	render() {
+		const { _id, text, createdAt, commenter } = this.props;
 		return (
 			<tr>
 				<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
 					<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-					<p className="font-size-sm">Noname</p>
+					<p className="font-size-sm">{commenter.firstName + " " + commenter.lastName}</p>
 				</td>
 				<td>
-					<em>{new Date().toString()}</em>
-					<p>Lorem ipsum</p>
+					<em>{toDateString(createdAt)}</em>
+					<p>{text}</p>
 				</td>
 			</tr>
 		);
@@ -37,13 +38,25 @@ export default class Ticket extends Component {
 		self = this;
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		const { ticketId } = this.state;
-		await this.props.dispatch(getTicketDetails(ticketId));
+		let ticket = this.props.ticket.list.find((item) => item._id === ticketId);
+		ticket ? this.props.dispatch(getTicketDetailsSuccess(ticket))
+			: this.props.dispatch(getTicketDetails(ticketId));
+		this.props.dispatch(listTicketComment(ticketId));
+	}
+
+	async addComment() {
+		if ($('#comment-input').val().trim() === '') { return; }
+		const text = $('#comment-input').val();
+		const { ticketId } = self.state;
+		const { _id, firstName, lastName } = self.props.user.me;
+		await self.props.dispatch(addTicketComment(ticketId, { text }, { _id, firstName, lastName }));
+		$('#comment-input').val('');
 	}
 
 	render() {
-		const { current } = this.props.ticket;
+		const { comments, current } = this.props.ticket;
 		const { owner, title, message, createdAt } = current;
 		const { firstName, lastName } = this.props.user.me;
 		return (
@@ -71,7 +84,7 @@ export default class Ticket extends Component {
 											<p className="font-size-sm">{owner.fullname}</p>
 										</td>
 										<td>
-											<em>Unknown</em>
+											<em>{toDateString(createdAt)}</em>
 											<p>{message}</p>
 										</td>
 									</tr>
@@ -86,8 +99,9 @@ export default class Ticket extends Component {
 						<div className="block-content">
 							<table className="table table-borderless">
 								<tbody>
-									{[0, 1, 2].map((item, i) => {
-										return (<CommentItem key={i} />);
+									{comments.map((item) => {
+										const { _id } = item;
+										return (<CommentItem key={_id} {...item} />);
 									})}
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>

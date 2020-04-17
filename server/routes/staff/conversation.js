@@ -20,7 +20,7 @@ module.exports = (app, db) => {
 		})
 		.post(async (req, res) => {
 			try {
-				const result = await Conversation.create({ ...req.body, creatorId: req.session.user._id });
+				const result = await Conversation.create({ ...req.body, creatorId: req.user._id });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -40,7 +40,7 @@ module.exports = (app, db) => {
 	router.route('/:id/comments')
 		.post(async (req, res) => {
 			try {
-				const data = { ...req.body, conversationId: req.params.id, commenterId: req.session.user._id };
+				const data = { ...req.body, conversationId: req.params.id, commenterId: req.user._id };
 				const result = await ConversationComment.create(data);
 				return res.json({ success: true, result });
 			} catch (error) {

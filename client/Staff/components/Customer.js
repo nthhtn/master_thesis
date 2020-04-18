@@ -17,11 +17,11 @@ class CustomerItem extends Component {
 	}
 
 	render() {
-		const { fullname, email, phone, address, note, _id } = this.props;
+		const { fullName, email, phone, address, note, _id } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td className="font-w600 font-size-sm">
-					<Link className="font-w600" to={`/customers/${_id}`}>{fullname}</Link>
+					<Link className="font-w600" to={`/customers/${_id}`}>{fullName}</Link>
 				</td>
 				<td className="font-size-sm"><em className="text-muted">{email}</em></td>
 				<td>{phone}</td>
@@ -42,16 +42,16 @@ export default class Customer extends Component {
 	}
 
 	async createCustomer() {
-		const fullname = $('#create-customer-name').val();
+		const fullName = $('#create-customer-name').val();
 		const email = $('#create-customer-email').val();
 		const phone = $('#create-customer-phone').val();
 		const address = $('#create-customer-address').val();
 		const note = $('#create-customer-note').val();
-		if (!fullname) {
+		if (!fullName) {
 			$('#create-customer-error').text('Customer name must not be empty!');
 			return;
 		}
-		await self.props.dispatch(createCustomer({ fullname, email, phone, address, note }));
+		await self.props.dispatch(createCustomer({ fullName, email, phone, address, note }));
 		$('#create-customer-error').text('');
 		$('#modal-create-customer input').val('');
 		$('#modal-create-customer').modal('hide');

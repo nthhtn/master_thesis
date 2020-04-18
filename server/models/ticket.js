@@ -73,7 +73,7 @@ export default class TicketModel {
 			let: { ownerId: '$ownerId' },
 			pipeline: [
 				{ $match: { $expr: { $eq: ['$_id', '$$ownerId'] } } },
-				{ $project: { fullname: 1, email: 1 } }
+				{ $project: { fullName: 1, email: 1 } }
 			],
 			as: 'owner'
 		};
@@ -91,7 +91,7 @@ export default class TicketModel {
 			let: { sectorId: '$sectorId' },
 			pipeline: [
 				{ $match: { $expr: { $eq: ['$_id', '$$sectorId'] } } },
-				{ $project: { name: 1 } }
+				{ $project: { name: 1, color: 1 } }
 			],
 			as: 'sector'
 		};

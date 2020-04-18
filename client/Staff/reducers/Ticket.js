@@ -2,7 +2,9 @@ const initialState = {
 	list: [],
 	current: {
 		id: null, title: '', message: '', createdAt: null,
-		owner: { email: '', fullname: '' }
+		owner: { email: '', fullName: '' },
+		sector: { name: '' },
+		assignee: { firstName: '', lastName: '', email: '' }
 	},
 	comments: []
 };

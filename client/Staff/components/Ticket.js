@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { createTicket, listTicket } from '../actions/Ticket';
+import { listTicketSector } from '../actions/TicketSector';
 
 let self;
 
@@ -17,7 +18,7 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, owner, assignee, createdAt } = this.props;
+		const { _id, title, message, owner, assignee, sector, createdAt } = this.props;
 		const datetime = new Date(createdAt);
 		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
 		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
@@ -34,8 +35,9 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td>{status}</td>
-				<td>{owner.fullname}</td>
+				<td>{owner.fullName}</td>
 				<td>{assignee}</td>
+				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
 				<td>{datestring}</td>
 			</tr>
 		);
@@ -54,25 +56,28 @@ export default class Ticket extends Component {
 	async createTicket() {
 		const title = $('#create-ticket-title').val();
 		const message = $('#create-ticket-message').val();
-		const phone = $('#create-ticket-phone').val();
-		const address = $('#create-ticket-address').val();
-		const note = $('#create-ticket-note').val();
-		if (!title || !message) {
-			$('#create-ticket-error').text('Ticket title must not be empty!');
+		const status = $('#create-ticket-status').val();
+		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
+		if (!title || !message || status == 0) {
+			$('#create-ticket-error').text('Invalid field(s)');
 			return;
 		}
-		await self.props.dispatch(createTicket({ fullname, email, phone, address, note }));
+		await self.props.dispatch(createTicket({ title, message, status, sectorId }));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
+		$('#modal-create-ticket textarea').val('');
+		$('#modal-create-ticket select').val(0);
 		$('#modal-create-ticket').modal('hide');
 	}
 
 	async componentDidMount() {
+		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		this.props.dispatch(listTicket());
 	}
 
 	render() {
 		const listTicket = this.props.ticket.list;
+		const listSector = this.props.ticketSector.list;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -130,10 +135,9 @@ export default class Ticket extends Component {
 														<label htmlFor="create-ticket-sector">Sector</label>
 														<select className="form-control" id="create-ticket-sector">
 															<option value="0">Please select</option>
-															<option value="1">Option #1</option>
-															<option value="2">Option #2</option>
-															<option value="3">Option #3</option>
-															<option value="4">Option #4</option>
+															{listSector.map((sector) =>
+																(<option key={sector._id} value={sector._id} style={{ color: sector.color }}>{sector.name}</option>))
+															}
 														</select>
 													</div>
 													<div className="form-group col-sm-12">
@@ -156,8 +160,9 @@ export default class Ticket extends Component {
 											<th style={{ width: '20%' }}>Title</th>
 											<th style={{ width: '20%' }}>Message</th>
 											<th style={{ width: '10%' }}>Status</th>
-											<th style={{ width: '10%' }}>Customer</th>
-											<th style={{ width: '10%' }}>Assignee</th>
+											<th style={{ width: '15%' }}>Customer</th>
+											<th style={{ width: '15%' }}>Assignee</th>
+											<th style={{ width: '10%' }}>Sector</th>
 											<th style={{ width: '10%' }}>Created at</th>
 										</tr>
 									</thead>

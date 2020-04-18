@@ -3,7 +3,8 @@ import { ObjectID } from 'mongodb';
 // let ticketSector = {
 // 	_id: 'string',
 // 	name: 'string',
-// 	description: 'string'
+// 	description: 'string',
+// 	color: 'string'
 // };
 
 export default class TicketModel {

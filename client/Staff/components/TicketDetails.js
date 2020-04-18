@@ -57,8 +57,9 @@ export default class Ticket extends Component {
 
 	render() {
 		const { comments, current } = this.props.ticket;
-		const { owner, title, message, createdAt } = current;
+		const { owner, title, message, status, sector, createdAt } = current;
 		const { firstName, lastName } = this.props.user.me;
+		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -81,11 +82,18 @@ export default class Ticket extends Component {
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ width: '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-											<p className="font-size-sm">{owner.fullname}</p>
+											<p className="font-size-sm">{owner.fullName}</p>
 										</td>
 										<td>
 											<em>{toDateString(createdAt)}</em>
 											<p>{message}</p>
+											<hr />
+											<p>
+												<span className={'badge badge-' + statusClass[status]}>{status}</span>
+												<span className='badge badge-info' style={{ backgroundColor: sector ? sector.color : 'transparent' }}>
+													{sector ? sector.name : ''}
+												</span>
+											</p>
 										</td>
 									</tr>
 								</tbody>

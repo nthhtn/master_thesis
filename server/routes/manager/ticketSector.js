@@ -26,6 +26,14 @@ module.exports = (app, db) => {
 		});
 
 	router.route('/:id')
+		.get(async (req, res) => {
+			try {
+				const result = await TicketSector.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
 		.put(async (req, res) => {
 			try {
 				const result = await TicketSector.update(req.params.id, req.body);

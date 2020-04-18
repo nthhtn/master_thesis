@@ -1,6 +1,6 @@
 const initialState = {
 	list: [],
-	current: { _id: null, fullname: '', email: '', phone: '', address: '', note: '' }
+	current: { _id: null, fullName: '', email: '', phone: '', address: '', note: '' }
 };
 
 export default function (state = initialState, action) {

@@ -6,6 +6,7 @@ let self;
 
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
 import { createTicket, listTicket } from '../actions/Ticket';
+import { listTicketSector } from '../actions/TicketSector';
 import { toDateString } from '../helpers';
 
 class TicketItem extends Component {
@@ -16,15 +17,18 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, createdAt } = this.props;
+		const { _id, title, message, createdAt, sector, status } = this.props;
 		return (
 			<tr>
-				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>The man</td>
 				<td style={{ width: '20%' }}>
 					<Link className="font-w600" to={`/tickets/:id`}>{title}</Link>
 				</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
+				</td>
+				<td className="d-none d-sm-table-cell font-w600">{status}</td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ color: sector ? sector.color : 'black' }}>
+					{sector ? sector.name : ''}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(createdAt)}</em>
@@ -47,27 +51,28 @@ export default class CustomerDetails extends Component {
 		const { customerId } = this.state;
 		await this.props.dispatch(getCustomerDetails(customerId));
 		const { current } = this.props.customer;
-		const { fullname, email, phone, address, note } = current;
-		$('#update-customer-name').val(fullname);
+		const { fullName, email, phone, address, note } = current;
+		$('#update-customer-name').val(fullName);
 		$('#update-customer-email').val(email);
 		$('#update-customer-phone').val(phone);
 		$('#update-customer-address').val(address);
 		$('#update-customer-note').val(note);
+		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		await this.props.dispatch(listTicket());
 	}
 
 	async updateCustomer() {
 		const { customerId } = self.state;
-		const fullname = $('#update-customer-name').val();
+		const fullName = $('#update-customer-name').val();
 		const email = $('#update-customer-email').val();
 		const phone = $('#update-customer-phone').val();
 		const address = $('#update-customer-address').val();
 		const note = $('#update-customer-note').val();
-		if (!fullname) {
+		if (!fullName) {
 			$('#update-customer-error').text('Customer name must not be empty!');
 			return;
 		}
-		await self.props.dispatch(updateCustomer(customerId, { fullname, email, phone, address, note }));
+		await self.props.dispatch(updateCustomer(customerId, { fullName, email, phone, address, note }));
 		$('#update-customer-error').text('');
 		Swal.fire({
 			html: 'Successful update!',
@@ -77,7 +82,7 @@ export default class CustomerDetails extends Component {
 
 	async deleteCustomer() {
 		const { customerId } = self.state;
-		const fullname = $('#update-customer-name').val();
+		const fullName = $('#update-customer-name').val();
 		Swal.fire({
 			title: 'Are you sure?',
 			text: "You won't be able to revert this!",
@@ -91,7 +96,7 @@ export default class CustomerDetails extends Component {
 				await self.props.dispatch(deleteCustomer(customerId));
 				await Swal.fire({
 					title: 'Deleted!',
-					html: `Customer <strong>"${fullname}"</strong> has been deleted.`,
+					html: `Customer <strong>"${fullName}"</strong> has been deleted.`,
 					timer: 2000
 				});
 				window.location.href = '/customers';
@@ -102,8 +107,10 @@ export default class CustomerDetails extends Component {
 	async createTicket() {
 		const title = $('#create-ticket-title').val();
 		const message = $('#create-ticket-message').val();
-		if (!title || !message) {
-			$('#create-ticket-error').text('All fields must not be empty');
+		const status = $('#create-ticket-status').val();
+		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
+		if (!title || !message || status == 0) {
+			$('#create-ticket-error').text('Invalid field(s)');
 			return;
 		}
 		const data = { title, message, ownerId: self.state.customerId };
@@ -115,7 +122,8 @@ export default class CustomerDetails extends Component {
 	}
 
 	render() {
-		const list = this.props.ticket.list;
+		const listTicket = this.props.ticket.list;
+		const listSector = this.props.ticketSector.list;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -172,7 +180,7 @@ export default class CustomerDetails extends Component {
 								<div className="block-header block-header-default">
 									<h3 className="block-title">Tickets</h3>
 									<div className="block-options">
-										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-ticket"><i className="fa fa-plus mr-1"></i> New Ticket</button>
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-ticket"><i className="fa fa-plus mr-1"></i></button>
 									</div>
 								</div>
 								<div className="block-content">
@@ -198,6 +206,26 @@ export default class CustomerDetails extends Component {
 																<label htmlFor="create-ticket-message">Message*</label>
 																<textarea rows="4" className="form-control" id="create-ticket-message" />
 															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-ticket-status">Status</label>
+																<select className="form-control" id="create-ticket-status">
+																	<option value="0">Please select</option>
+																	<option value="open">Open</option>
+																	<option value="new">New</option>
+																	<option value="inprogress">In Progress</option>
+																	<option value="resolved">Resolved</option>
+																	<option value="closed">Closed</option>
+																</select>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-ticket-sector">Sector</label>
+																<select className="form-control" id="create-ticket-sector">
+																	<option value="0">Please select</option>
+																	{listSector.map((sector) =>
+																		(<option key={sector._id} value={sector._id} style={{ color: sector.color }}>{sector.name}</option>))
+																	}
+																</select>
+															</div>
 															<div className="form-group col-sm-12">
 																<label id="create-ticket-error" style={{ color: 'red' }}></label>
 															</div>
@@ -215,7 +243,7 @@ export default class CustomerDetails extends Component {
 									<div className="pull-x">
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
-												{list.map((item) => {
+												{listTicket.map((item) => {
 													return (<TicketItem key={item._id} {...item} />)
 												})}
 											</tbody>

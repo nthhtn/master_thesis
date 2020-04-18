@@ -12,11 +12,12 @@ class TicketSectorItem extends PureComponent {
 	}
 
 	render() {
-		const { name, description, _id, showModal } = this.props;
+		const { name, description, color, _id, showModal } = this.props;
 		return (
-			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description })}>
+			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description, color })}>
 				<td className="font-w600 font-size-sm">{name}</td>
 				<td className="font-size-sm"><em className="text-muted">{description}</em></td>
+				<td style={{ backgroundColor: color }}></td>
 			</tr>
 		);
 	}
@@ -34,11 +35,12 @@ export default class TicketSector extends Component {
 	async createTicketSector() {
 		const name = $('#create-sector-name').val();
 		const description = $('#create-sector-description').val();
-		if (!name || !description) {
+		const color = $('#create-sector-color').val();
+		if (!name || !description || !color) {
 			$('#create-sector-error').text('All fields must not be empty!');
 			return;
 		}
-		await self.props.dispatch(createTicketSector({ name, description }));
+		await self.props.dispatch(createTicketSector({ name, description, color }));
 		$('#create-sector-error').text('');
 		$('#modal-create-sector input').val('');
 		$('#modal-create-sector textarea').val('');
@@ -46,6 +48,11 @@ export default class TicketSector extends Component {
 	}
 
 	async componentDidMount() {
+		jQuery(() => {
+			One.helpers(['colorpicker']);
+			$('#create-sector-color').colorpicker();
+			$('#update-sector-color').colorpicker();
+		});
 		this.props.dispatch(listTicketSector());
 	}
 
@@ -53,21 +60,23 @@ export default class TicketSector extends Component {
 		const _id = $('#update-sector-id').val();
 		const name = $('#update-sector-name').val();
 		const description = $('#update-sector-description').val();
-		if (!_id || !name || !description) {
+		const color = $('#update-sector-color').val();
+		if (!_id || !name || !description || !color) {
 			$('#update-sector-error').text('All fields must not be empty!');
 			return;
 		}
-		await self.props.dispatch(updateTicketSector(_id, { name, description }));
+		await self.props.dispatch(updateTicketSector(_id, { name, description, color }));
 		$('#update-sector-error').text('');
 		$('#modal-update-sector input').val('');
 		$('#modal-update-sector textarea').val('');
 		$('#modal-update-sector').modal('hide');
 	}
 
-	showUpdateModal({ _id, name, description }) {
+	showUpdateModal({ _id, name, description, color }) {
 		$('#update-sector-id').val(_id);
 		$('#update-sector-name').val(name);
 		$('#update-sector-description').val(description);
+		$('#update-sector-color').val(color);
 		$('#modal-update-sector').modal('show');
 	}
 
@@ -116,6 +125,10 @@ export default class TicketSector extends Component {
 														<textarea row="4" className="form-control" id="create-sector-description" />
 													</div>
 													<div className="form-group col-sm-12">
+														<label htmlFor="create-sector-color">Label Color*</label>
+														<input type="text" className="form-control" id="create-sector-color" />
+													</div>
+													<div className="form-group col-sm-12">
 														<label id="create-sector-error" style={{ color: 'red' }}></label>
 													</div>
 												</div>
@@ -155,6 +168,10 @@ export default class TicketSector extends Component {
 														<textarea row="4" className="form-control" id="update-sector-description" />
 													</div>
 													<div className="form-group col-sm-12">
+														<label htmlFor="update-sector-color">Label Color*</label>
+														<input type="text" className="form-control" id="update-sector-color" />
+													</div>
+													<div className="form-group col-sm-12">
 														<label id="update-sector-error" style={{ color: 'red' }}></label>
 													</div>
 												</div>
@@ -173,6 +190,7 @@ export default class TicketSector extends Component {
 										<tr>
 											<th>Sector name</th>
 											<th>Description</th>
+											<th>Label color</th>
 										</tr>
 									</thead>
 									<tbody>

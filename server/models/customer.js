@@ -3,7 +3,7 @@ import { ObjectID } from 'mongodb';
 // let customer = {
 // 	_id: 'string',
 // 	email: 'string',
-// 	fullname: 'string',
+// 	fullName: 'string',
 // 	phone: 'string',
 // 	address: 'string',
 // 	note: 'string',

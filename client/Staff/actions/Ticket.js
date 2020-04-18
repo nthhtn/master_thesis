@@ -37,7 +37,10 @@ export function getTicketDetails(id) {
 		response = await fetch(`/api/customers/${ticket.ownerId}`, { credentials: 'same-origin' });
 		responseJson = await response.json();
 		const owner = responseJson.result;
-		dispatch(getTicketDetailsSuccess({ ...ticket, owner }));
+		response = await fetch(`/api/ticketsectors/${ticket.sectorId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const sector = responseJson.result;
+		dispatch(getTicketDetailsSuccess({ ...ticket, owner, sector }));
 	};
 }
 

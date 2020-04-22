@@ -22,8 +22,9 @@ module.exports = (app, db) => {
 		})
 		.post(async (req, res) => {
 			try {
-				const result = await Workgroup.create(req.body);
-				await WorkgroupMember.create({ workgroupId: result._id, userId: req.user._id });
+				const { name, description, members } = req.body;
+				const result = await Workgroup.create({ name, description });
+				await WorkgroupMember.createMany(members.map((member) => ({ workgroupId: result._id, userId: member })));
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -34,8 +35,8 @@ module.exports = (app, db) => {
 		.get(async (req, res) => {
 			try {
 				const result = await Workgroup.read(req.params.id);
-				const group = await WorkgroupMember.lookupMembersByWorkgroup({ workgroupId: req.params.id });
-				return res.json({ success: true, result: { ...result, members: group.members } });
+				const members = await WorkgroupMember.lookupMembersByWorkgroup(req.params.id);
+				return res.json({ success: true, result: { ...result, members } });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}
@@ -43,21 +44,27 @@ module.exports = (app, db) => {
 
 	router.route('/:id/members')
 		.post(async (req, res) => {
+			const data = req.body.list.map((item) => ({ workgroupId: req.params.id, userId: item }));
 			try {
-				const list = await User.queryByFields({ email: { $in: req.body.list } });
-				const data = list.map((item) => ({ workgroupId: req.params.id, userId: item }));
 				const result = await WorkgroupMember.createMany(data);
-				const members = await WorkgroupMember.lookupMembersByWorkgroup({ _id: { $in: result.map((item) => (item._id)) } });
-				return res.json({ success: true, result: members });
+				return res.json({ success: true });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}
 		})
 		.get(async (req, res) => {
 			try {
-				const result = await WorkgroupMember.lookupMembersByWorkgroup({ workgroupId: req.params.id });
-				console.log(result);
+				const result = await WorkgroupMember.lookupMembersByWorkgroup(req.params.id);
 				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.delete(async (req, res) => {
+			const fields = { userId: { $in: req.body.list }, workgroupId: req.params.id };
+			try {
+				const result = await WorkgroupMember.deleteMany(fields);
+				return res.json({ success: true });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}

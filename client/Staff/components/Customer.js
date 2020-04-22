@@ -20,10 +20,10 @@ class CustomerItem extends Component {
 		const { fullName, email, phone, address, note, _id } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td className="font-w600 font-size-sm">
+				<td className="font-w600">
 					<Link className="font-w600" to={`/customers/${_id}`}>{fullName}</Link>
 				</td>
-				<td className="font-size-sm"><em className="text-muted">{email}</em></td>
+				<td><em className="text-muted">{email}</em></td>
 				<td>{phone}</td>
 				<td>{address}</td>
 				<td>{note}</td>
@@ -78,7 +78,7 @@ export default class Customer extends Component {
 							<h3 className="block-title"></h3>
 							<div className="block-options">
 								<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-customer">
-									<i className="fa fa-plus mr-1"></i> New Customer
+									<i className="fa fa-plus"></i> New
 								</button>
 							</div>
 						</div>
@@ -124,7 +124,7 @@ export default class Customer extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createCustomer}><i className="fa fa-check mr-1"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createCustomer}><i className="fa fa-check"></i>Ok</button>
 											</div>
 										</div>
 									</div>

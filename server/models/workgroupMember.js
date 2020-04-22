@@ -16,6 +16,7 @@ export default class WorkgroupMemberModel {
 	async create(data) {
 		data._id = new ObjectID().toString();
 		try {
+			await this._db.collection(this._table).createIndex({ workgroupId: 1, userId: 1 }, { unique: true });
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);
 		} catch (error) {
@@ -26,6 +27,7 @@ export default class WorkgroupMemberModel {
 	async createMany(list) {
 		list = list.map((item) => ({ ...item, _id: new ObjectID().toString() }));
 		try {
+			await this._db.collection(this._table).createIndex({ workgroupId: 1, userId: 1 }, { unique: true });
 			await this._db.collection(this._table).insertMany(list, { ordered: false });
 			return Promise.resolve(list);
 		} catch (error) {
@@ -36,6 +38,15 @@ export default class WorkgroupMemberModel {
 	async delete(id) {
 		try {
 			const result = await this._db.collection(this._table).findOneAndDelete({ _id: id });
+			return Promise.resolve(result.value);
+		} catch (error) {
+			return Promise.reject(error.message);
+		}
+	}
+
+	async deleteMany(fields = {}) {
+		try {
+			const result = await this._db.collection(this._table).deleteMany(fields);
 			return Promise.resolve(result.value);
 		} catch (error) {
 			return Promise.reject(error.message);
@@ -67,7 +78,7 @@ export default class WorkgroupMemberModel {
 		}
 	}
 
-	async lookupMembersByWorkgroup(filter_options) {
+	async lookupMembersByWorkgroup(workgroupId) {
 		const lookup = {
 			from: 'user',
 			let: { memberId: '$userId' },
@@ -75,12 +86,12 @@ export default class WorkgroupMemberModel {
 				{ $match: { $expr: { $eq: ['$_id', '$$memberId'] } } },
 				{ $project: { firstName: 1, lastName: 1, email: 1 } }
 			],
-			as: 'members'
+			as: 'member'
 		};
-		const aggregate = [{ $match: filter_options }, { $lookup: lookup }];
+		const aggregate = [{ $match: { workgroupId } }, { $lookup: lookup }, { $unwind: { path: '$member', preserveNullAndEmptyArrays: true } }];
 		try {
 			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
-			return result[0];
+			return result.map((item) => (item.member));
 		} catch (error) {
 			return Promise.reject(error.message);
 		}

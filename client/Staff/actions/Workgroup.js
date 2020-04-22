@@ -43,20 +43,38 @@ export function getWorkgroupDetailsSuccess(workgroup) {
 	return { type: 'GET_WORKGROUP_DETAILS', workgroup };
 }
 
-export function addWorkgroupMembers(emails) {
+export function addWorkgroupMembers(id, list) {
 	return async (dispatch) => {
-		let response = await fetch(`/api/workgroups`, {
+		let response = await fetch(`/api/workgroups/${id}/members`, {
 			credentials: 'same-origin',
 			method: 'post',
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ list: emails })
+			body: JSON.stringify({ list: list.map((item) => (item._id)) })
 		});
 		let responseJson = await response.json();
-		const members = responseJson.result;
-		dispatch(addWorkgroupMembersSuccess(members));
+		const result = responseJson.result;
+		dispatch(addWorkgroupMembersSuccess(list));
 	};
 }
 
-export function addWorkgroupMembersSuccess(members) {
-	return { type: 'ADD_WORKGROUP_MEMBERS', members };
+export function addWorkgroupMembersSuccess(list) {
+	return { type: 'ADD_WORKGROUP_MEMBERS', list };
+}
+
+export function removeWorkgroupMembers(id, list) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/workgroups/${id}/members`, {
+			credentials: 'same-origin',
+			method: 'DELETE',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ list: list.map((item) => (item._id)) })
+		});
+		let responseJson = await response.json();
+		const result = responseJson.result;
+		dispatch(removeWorkgroupMembersSuccess(list));
+	};
+}
+
+export function removeWorkgroupMembersSuccess(list) {
+	return { type: 'REMOVE_WORKGROUP_MEMBERS', list };
 }

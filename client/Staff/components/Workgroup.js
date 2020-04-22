@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import { listWorkgroup, createWorkgroup } from '../actions/Workgroup';
 
@@ -37,7 +38,7 @@ class WorkgroupItem extends Component {
 					<div className="block-content block-content-full text-center">
 						<img className="img-avatar img-avatar96 img-avatar-thumb" src="/assets/oneui/media/avatars/avatar12.jpg" alt="" />
 					</div>
-					<div className="block-content font-size-sm" style={textStyle}>
+					<div className="block-content" style={textStyle}>
 						{workgroupDescription}
 					</div>
 				</div>
@@ -51,7 +52,13 @@ export default class Workgroup extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			allowNew: false,
+			isLoading: false,
+			multiple: true,
+			options: [],
+			selected: []
+		};
 		self = this;
 	}
 
@@ -62,7 +69,27 @@ export default class Workgroup extends Component {
 	async createWorkgroup() {
 		const name = $('#create-workgroup-name').val().trim();
 		const description = $('#create-workgroup-description').val().trim();
-		self.props.dispatch(createWorkgroup({ name, description }));
+		const members = self.state.selected.map((item) => (item._id)).concat([self.props.user.me._id]);
+		if (!name || !description) {
+			$('#create-workgroup-error').text('All fields must not be empty!');
+			return;
+		}
+		self.props.dispatch(createWorkgroup({ name, description, members }));
+		$('#create-workgroup-error').text('');
+		$('#modal-create-workgroup').modal('hide');
+		self.refs.searchUserRef.clear();
+	}
+
+	async searchUser(query) {
+		self.setState({ isLoading: true });
+		const response = await fetch(`/api/users/search?q=${query}`, { credentials: 'same-origin' });
+		const responseJson = await response.json();
+		const result = responseJson.result;
+		self.setState({ isLoading: false, options: result });
+	}
+
+	handleAddChange(selected) {
+		self.setState({ selected });
 	}
 
 	render() {
@@ -73,7 +100,7 @@ export default class Workgroup extends Component {
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
 							<h1 className="flex-sm-fill h3 my-2">List of Workgroups</h1>
 							<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-workgroup">
-								<i className="fa fa-plus mr-1"></i> New
+								<i className="fa fa-plus"></i> New
 							</button>
 							<div className="modal fade" id="modal-create-workgroup" tabIndex="-1" role="dialog" aria-labelledby="modal-create-workgroup" aria-modal="true" style={{ paddingRight: '15px' }}>
 								<div className="modal-dialog" role="document">
@@ -90,22 +117,34 @@ export default class Workgroup extends Component {
 											<div className="block-content font-size-sm">
 												<div className="row">
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-workgroup-name">Name</label>
+														<label htmlFor="create-workgroup-name">Name*</label>
 														<input type="text" className="form-control" id="create-workgroup-name" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-workgroup-description">Description</label>
+														<label htmlFor="create-workgroup-description">Description*</label>
 														<textarea rows="4" className="form-control" id="create-workgroup-description" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-workgroup-members">Members</label>
-														<input type="text" className="form-control" id="create-workgroup-members" />
+														<label htmlFor="create-workgroup-members">Members*</label>
+														<AsyncTypeahead
+															{...this.state}
+															id="create-workgroup-members"
+															labelKey="email"
+															placeholder="Type to search"
+															multiple
+															onSearch={this.searchUser}
+															onChange={this.handleAddChange}
+															ref='searchUserRef'
+														/>
+													</div>
+													<div className="form-group col-sm-12">
+														<label id="create-workgroup-error" style={{ color: 'red' }}></label>
 													</div>
 												</div>
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" data-dismiss="modal" onClick={this.createWorkgroup}><i className="fa fa-check mr-1"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createWorkgroup}><i className="fa fa-check"></i>Ok</button>
 											</div>
 										</div>
 									</div>

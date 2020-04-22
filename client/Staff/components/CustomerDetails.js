@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Swal from 'sweetalert2';
+import swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
 let self;
@@ -16,17 +16,22 @@ class TicketItem extends Component {
 		this.state = {};
 	}
 
+	handleClick() {
+		this.props.history.push(`/tickets/${this.props._id}`);
+	}
+
 	render() {
 		const { _id, title, message, createdAt, sector, status } = this.props;
+		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
 		return (
-			<tr>
+			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td style={{ width: '20%' }}>
-					<Link className="font-w600" to={`/tickets/:id`}>{title}</Link>
+					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
 				</td>
-				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+				<td style={{ width: '30%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
 				</td>
-				<td className="d-none d-sm-table-cell font-w600">{status}</td>
+				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ color: sector ? sector.color : 'black' }}>
 					{sector ? sector.name : ''}
 				</td>
@@ -74,7 +79,7 @@ export default class CustomerDetails extends Component {
 		}
 		await self.props.dispatch(updateCustomer(customerId, { fullName, email, phone, address, note }));
 		$('#update-customer-error').text('');
-		Swal.fire({
+		swal.fire({
 			html: 'Successful update!',
 			timer: 2000
 		});
@@ -83,7 +88,7 @@ export default class CustomerDetails extends Component {
 	async deleteCustomer() {
 		const { customerId } = self.state;
 		const fullName = $('#update-customer-name').val();
-		Swal.fire({
+		swal.fire({
 			title: 'Are you sure?',
 			text: "You won't be able to revert this!",
 			icon: 'warning',
@@ -94,14 +99,14 @@ export default class CustomerDetails extends Component {
 		}).then(async (result) => {
 			if (result.value) {
 				await self.props.dispatch(deleteCustomer(customerId));
-				await Swal.fire({
+				await swal.fire({
 					title: 'Deleted!',
 					html: `Customer <strong>"${fullName}"</strong> has been deleted.`,
 					timer: 2000
 				});
 				window.location.href = '/customers';
 			}
-		})
+		});
 	}
 
 	async createTicket() {
@@ -113,7 +118,7 @@ export default class CustomerDetails extends Component {
 			$('#create-ticket-error').text('Invalid field(s)');
 			return;
 		}
-		const data = { title, message, ownerId: self.state.customerId };
+		const data = { title, message, ownerId: self.state.customerId, status, sectorId };
 		await self.props.dispatch(createTicket(data));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
@@ -180,7 +185,7 @@ export default class CustomerDetails extends Component {
 								<div className="block-header block-header-default">
 									<h3 className="block-title">Tickets</h3>
 									<div className="block-options">
-										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-ticket"><i className="fa fa-plus mr-1"></i></button>
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-ticket"><i className="fa fa-plus"></i></button>
 									</div>
 								</div>
 								<div className="block-content">
@@ -233,7 +238,7 @@ export default class CustomerDetails extends Component {
 													</div>
 													<div className="block-content block-content-full text-right border-top">
 														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-														<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check mr-1"></i>Ok</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check"></i>Ok</button>
 													</div>
 												</div>
 											</div>
@@ -244,7 +249,7 @@ export default class CustomerDetails extends Component {
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
 												{listTicket.map((item) => {
-													return (<TicketItem key={item._id} {...item} />)
+													return (<TicketItem key={item._id} {...item} history={self.props.history} />)
 												})}
 											</tbody>
 										</table>

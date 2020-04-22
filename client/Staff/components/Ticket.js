@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { createTicket, listTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
+import { toDateString } from '../helpers';
 
 let self;
 
@@ -18,27 +19,21 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, owner, assignee, sector, createdAt } = this.props;
-		const datetime = new Date(createdAt);
-		const date = datetime.getDate() < 10 ? '0' + datetime.getDate().toString() : datetime.getDate().toString();
-		const month = (datetime.getMonth() + 1 < 10) ? '0' + (datetime.getMonth() + 1).toString() : (datetime.getMonth() + 1).toString();
-		const year = datetime.getFullYear();
-		const hour = datetime.getHours() < 10 ? '0' + datetime.getHours().toString() : datetime.getHours().toString();
-		const min = datetime.getMinutes() < 10 ? '0' + datetime.getMinutes().toString() : datetime.getMinutes().toString();
-		const datestring = `${date}/${month}/${year} ${hour}:${min}`;
+		const { _id, title, message, owner, assignee, sector, status, createdAt } = this.props;
+		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td className="font-w600 font-size-sm">
+				<td className="font-w600">
 					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
 				</td>
-				<td className="font-size-sm" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
 				</td>
-				<td>{status}</td>
+				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td>{owner.fullName}</td>
 				<td>{assignee}</td>
 				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
-				<td>{datestring}</td>
+				<td>{toDateString(createdAt)}</td>
 			</tr>
 		);
 	}
@@ -93,7 +88,7 @@ export default class Ticket extends Component {
 							<h3 className="block-title"></h3>
 							<div className="block-options">
 								<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-ticket">
-									<i className="fa fa-plus mr-1"></i> New Ticket
+									<i className="fa fa-plus"></i> New
 								</button>
 							</div>
 						</div>
@@ -147,7 +142,7 @@ export default class Ticket extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check mr-1"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check"></i>Ok</button>
 											</div>
 										</div>
 									</div>

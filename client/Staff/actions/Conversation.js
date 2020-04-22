@@ -47,9 +47,9 @@ export function getConversationDetailsSuccess(conversation) {
 	return { type: 'GET_CONVERSATION_DETAILS', conversation };
 }
 
-export function addConversationComment(conversationId, comment, commenter) {
+export function addConversationComment(id, comment, commenter) {
 	return async (dispatch) => {
-		const url = '/api/conversations/' + conversationId + '/comments';
+		const url = '/api/conversations/' + id + '/comments';
 		const response = await fetch(url, {
 			credentials: 'same-origin',
 			method: 'post',
@@ -65,9 +65,9 @@ export function addConversationCommentSuccess(comment) {
 	return { type: 'ADD_CONVERSATION_COMMENT', comment };
 }
 
-export function listConversationComment(conversationId) {
+export function listConversationComment(id) {
 	return async (dispatch) => {
-		const url = '/api/conversations/' + conversationId + '/comments';
+		const url = '/api/conversations/' + id + '/comments';
 		const response = await fetch(url, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listConversationCommentSuccess(responseJson.result));

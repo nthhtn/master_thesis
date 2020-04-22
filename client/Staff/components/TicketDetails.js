@@ -68,7 +68,7 @@ export default class Ticket extends Component {
 							<h1 className="flex-sm-fill h3 my-2">{title}</h1>
 							<div className="block-options">
 								<a className="btn-block-option mr-2 js-scroll-to-enabled" href="#comment-input" data-toggle="scroll-to">
-									<i className="fa fa-reply mr-1"></i> Reply
+									<i className="fa fa-reply"></i> Reply
                                 </a>
 							</div>
 						</div>
@@ -88,12 +88,12 @@ export default class Ticket extends Component {
 											<em>{toDateString(createdAt)}</em>
 											<p>{message}</p>
 											<hr />
-											<p>
+											<h4>
 												<span className={'badge badge-' + statusClass[status]}>{status}</span>
 												<span className='badge badge-info' style={{ backgroundColor: sector ? sector.color : 'transparent' }}>
 													{sector ? sector.name : ''}
 												</span>
-											</p>
+											</h4>
 										</td>
 									</tr>
 								</tbody>
@@ -121,7 +121,7 @@ export default class Ticket extends Component {
 												<textarea className="form-control" id="comment-input" rows="4" placeholder="Reply with your comment here..."></textarea>
 											</div>
 											<div className="form-group">
-												<button onClick={this.addComment} className="btn btn-primary"><i className="fa fa-reply mr-1"></i> Reply</button>
+												<button onClick={this.addComment} className="btn btn-primary"><i className="fa fa-reply"></i> Reply</button>
 											</div>
 										</td>
 									</tr>

@@ -73,6 +73,18 @@ store.dispatch(getMyProfile()).then(() => {
 												<span className="nav-main-link-name">Ticket Sectors</span>
 											</Link>
 										</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/issues">
+												<i className="nav-main-link-icon fa fa-file-alt"></i>
+												<span className="nav-main-link-name">Issues</span>
+											</Link>
+										</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/users">
+												<i className="nav-main-link-icon fa fa-users-cog"></i>
+												<span className="nav-main-link-name">Users</span>
+											</Link>
+										</li>
 									</ul>
 								</div>
 							</div>

@@ -13,19 +13,19 @@ export function createTicketSector(sector) {
 
 export function createTicketSectorSuccess(sector) {
 	return { type: 'CREATE_TICKET_SECTOR', sector };
-}
+};
 
 export function listTicketSector() {
 	return async (dispatch) => {
 		const response = await fetch(`/api/ticketsectors`, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listTicketSectorSuccess(responseJson.result));
-	}
-}
+	};
+};
 
 export function listTicketSectorSuccess(list) {
 	return { type: 'LIST_TICKET_SECTOR', list };
-}
+};
 
 export function updateTicketSector(id, data) {
 	return async (dispatch) => {
@@ -39,7 +39,7 @@ export function updateTicketSector(id, data) {
 		const sector = responseJson.result;
 		dispatch(updateTicketSectorSuccess(sector));
 	};
-}
+};
 
 export function updateTicketSectorSuccess(sector) {
 	return { type: 'UPDATE_TICKET_SECTOR', sector };
@@ -54,8 +54,8 @@ export function deleteTicketSector(id) {
 		let responseJson = await response.json();
 		dispatch(deleteTicketSectorSuccess(id));
 	};
-}
+};
 
 export function deleteTicketSectorSuccess(id) {
 	return { type: 'DELETE_TICKET_SECTOR', id };
-}
+};

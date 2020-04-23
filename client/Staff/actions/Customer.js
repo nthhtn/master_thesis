@@ -13,7 +13,7 @@ export function createCustomer(customer) {
 
 export function createCustomerSuccess(customer) {
 	return { type: 'CREATE_CUSTOMER', customer };
-}
+};
 
 export function listCustomer() {
 	return async (dispatch) => {
@@ -21,11 +21,11 @@ export function listCustomer() {
 		const responseJson = await response.json();
 		dispatch(listCustomerSuccess(responseJson.result));
 	}
-}
+};
 
 export function listCustomerSuccess(list) {
 	return { type: 'LIST_CUSTOMER', list };
-}
+};
 
 export function getCustomerDetails(id) {
 	return async (dispatch) => {
@@ -34,11 +34,11 @@ export function getCustomerDetails(id) {
 		const customer = responseJson.result;
 		dispatch(getCustomerDetailsSuccess(customer));
 	};
-}
+};
 
 export function getCustomerDetailsSuccess(customer) {
 	return { type: 'GET_CUSTOMER_DETAILS', customer };
-}
+};
 
 export function updateCustomer(id, data) {
 	return async (dispatch) => {
@@ -52,11 +52,11 @@ export function updateCustomer(id, data) {
 		const customer = responseJson.result;
 		dispatch(updateCustomerSuccess(customer));
 	};
-}
+};
 
 export function updateCustomerSuccess(customer) {
 	return { type: 'UPDATE_CUSTOMER', customer };
-}
+};
 
 export function deleteCustomer(id) {
 	return async (dispatch) => {
@@ -67,8 +67,8 @@ export function deleteCustomer(id) {
 		let responseJson = await response.json();
 		dispatch(deleteCustomerSuccess(id));
 	};
-}
+};
 
 export function deleteCustomerSuccess(id) {
 	return { type: 'DELETE_CUSTOMER', id };
-}
+};

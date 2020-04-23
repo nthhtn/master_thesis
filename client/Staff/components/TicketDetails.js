@@ -18,11 +18,11 @@ class CommentItem extends Component {
 			<tr>
 				<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
 					<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-					<p className="font-size-sm">{commenter.firstName + " " + commenter.lastName}</p>
+					<p>{commenter.firstName + " " + commenter.lastName}</p>
 				</td>
 				<td>
 					<em>{toDateString(createdAt)}</em>
-					<p>{text}</p>
+					<div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>
 				</td>
 			</tr>
 		);
@@ -82,11 +82,11 @@ export default class Ticket extends Component {
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ width: '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-											<p className="font-size-sm">{owner.fullName}</p>
+											<p>{owner.fullName}</p>
 										</td>
 										<td>
 											<em>{toDateString(createdAt)}</em>
-											<p>{message}</p>
+											<div style={{ whiteSpace: 'pre-wrap' }}>{message}</div>
 											<hr />
 											<h4>
 												<span className={'badge badge-' + statusClass[status]}>{status}</span>
@@ -94,6 +94,25 @@ export default class Ticket extends Component {
 													{sector ? sector.name : ''}
 												</span>
 											</h4>
+											<div className="row">
+												<div className="form-group col-sm-3">
+													<label htmlFor="create-ticket-status">Status</label>
+													<select className="form-control" id="create-ticket-status">
+														<option value="0">Please select</option>
+														<option value="open">Open</option>
+														<option value="new">New</option>
+														<option value="inprogress">In Progress</option>
+														<option value="resolved">Resolved</option>
+														<option value="closed">Closed</option>
+													</select>
+												</div>
+												<div className="form-group col-sm-3">
+													<label htmlFor="create-ticket-sector">Sector</label>
+													<select className="form-control" id="create-ticket-sector">
+														<option value="0">Please select</option>
+													</select>
+												</div>
+											</div>
 										</td>
 									</tr>
 								</tbody>
@@ -114,7 +133,7 @@ export default class Ticket extends Component {
 									<tr>
 										<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
 											<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-											<p className="font-size-sm">{firstName + ' ' + lastName}</p>
+											<p>{firstName + ' ' + lastName}</p>
 										</td>
 										<td>
 											<div className="form-group">

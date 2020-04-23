@@ -4,13 +4,16 @@ import { connect } from 'react-redux';
 
 import IndexPage from './IndexPage';
 import Workgroup from './Workgroup';
-import ConversationDetails from './ConversationDetails';
 import WorkgroupDetails from './WorkgroupDetails';
+import ConversationDetails from './ConversationDetails';
 import Customer from './Customer';
 import CustomerDetails from './CustomerDetails';
 import TicketDetails from './TicketDetails';
 import Ticket from './Ticket';
 import TicketSector from './TicketSector';
+import Task from './Task';
+import User from './User';
+import Issue from './Issue';
 
 class Main extends Component {
 
@@ -39,6 +42,12 @@ class Main extends Component {
 					render={(props) => <TicketDetails {...this.props} {...props} />} />
 				<Route exact path='/ticketsectors'
 					render={() => <TicketSector {...this.props} />} />
+				<Route exact path='/tasks'
+					render={() => <Task {...this.props} />} />
+				<Route exact path='/users'
+					render={() => <User {...this.props} />} />
+				<Route exact path='/issues'
+					render={() => <Issue {...this.props} />} />
 				<Route path='*' component={IndexPage} />
 			</Switch>
 		);

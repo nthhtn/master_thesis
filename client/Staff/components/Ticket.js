@@ -71,7 +71,7 @@ export default class Ticket extends Component {
 	}
 
 	render() {
-		const listTicket = this.props.ticket.list;
+		const list = this.props.ticket.list;
 		const listSector = this.props.ticketSector.list;
 		return (
 			<main id="main-container">
@@ -162,12 +162,7 @@ export default class Ticket extends Component {
 										</tr>
 									</thead>
 									<tbody>
-										{
-											listTicket.map((item) => {
-												const { _id } = item;
-												return (<TicketItem key={_id} {...item} history={self.props.history} />);
-											})
-										}
+										{list.map((item) => (<TicketItem key={item._id} {...item} history={self.props.history} />))}
 									</tbody>
 								</table>
 							</div>

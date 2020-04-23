@@ -23,7 +23,7 @@ class CommentItem extends Component {
 				</td>
 				<td>
 					<em>{toDateString(createdAt)}</em>
-					<p>{text}</p>
+					<div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>
 				</td>
 			</tr>
 		);
@@ -98,7 +98,7 @@ export default class Conversation extends Component {
 										</td>
 										<td>
 											<em>{datestring}</em>
-											<p>{content}</p>
+											<div style={{ whiteSpace: 'pre-wrap' }}>{content}</div>
 										</td>
 									</tr>
 								</tbody>
@@ -113,7 +113,7 @@ export default class Conversation extends Component {
 							<table className="table table-borderless">
 								<tbody>
 									{comments.map((item) => {
-										const {_id}=item;
+										const { _id } = item;
 										return (<CommentItem key={_id} {...item} />);
 									})}
 									<tr>

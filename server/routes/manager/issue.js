@@ -1,16 +1,16 @@
 import express from 'express';
 
-import UserModel from '../../models/user';
+import IssueModel from '../../models/issue';
 
 module.exports = (app, db) => {
 
 	const router = express.Router();
-	const User = new UserModel(db);
+	const Issue = new IssueModel(db);
 
 	router.route('/')
 		.get(async (req, res) => {
 			try {
-				const result = await User.queryByFields(req.query);
+				const result = await Issue.queryByFields(req.query);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -18,17 +18,7 @@ module.exports = (app, db) => {
 		})
 		.post(async (req, res) => {
 			try {
-				const result = await User.create(req.body);
-				return res.json({ success: true, result });
-			} catch (error) {
-				return res.status(400).json({ success: false, error: error.message });
-			}
-		});
-
-	router.route('/search')
-		.get(async (req, res) => {
-			try {
-				const result = await User.queryByFields({ email: { $regex: new RegExp(req.query.q, 'gi') } });
+				const result = await Issue.create(req.body);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -38,14 +28,21 @@ module.exports = (app, db) => {
 	router.route('/:id')
 		.get(async (req, res) => {
 			try {
-				const data = await User.read(req.params.id);
-				const { _id, firstName, lastName, email } = data;
-				return res.json({ success: true, result: { _id, firstName, lastName, email } });
+				const result = await Issue.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.put(async (req, res) => {
+			try {
+				const result = await Issue.update(req.params.id, req.body);
+				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}
 		});
 
-	app.use('/api/users', router);
+	app.use('/api/issues', router);
 
 };

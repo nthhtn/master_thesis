@@ -7,5 +7,6 @@ import task from './Task';
 import ticket from './Ticket';
 import customer from './Customer';
 import ticketSector from './TicketSector';
+import issue from './Issue';
 
-export default combineReducers({ workgroup, conversation, user, task, customer, ticket, ticketSector });
+export default combineReducers({ workgroup, conversation, user, task, customer, ticket, ticketSector, issue });

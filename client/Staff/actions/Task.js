@@ -13,7 +13,7 @@ export function createTask(task) {
 
 export function createTaskSuccess(task) {
 	return { type: 'CREATE_TASK', task };
-}
+};
 
 export function listTask() {
 	return async (dispatch) => {
@@ -21,8 +21,8 @@ export function listTask() {
 		const responseJson = await response.json();
 		dispatch(listTaskSuccess(responseJson.result));
 	}
-}
+};
 
 export function listTaskSuccess(list) {
 	return { type: 'LIST_TASK', list };
-}
+};

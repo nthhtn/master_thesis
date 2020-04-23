@@ -25,6 +25,24 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/:id')
+		.put(async (req, res) => {
+			try {
+				const result = await Task.update(req.params.id, req.body);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
+		.delete(async (req, res) => {
+			try {
+				const result = await Task.delete(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	app.use('/api/tasks', router);
 
 };

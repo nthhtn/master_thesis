@@ -1,20 +1,16 @@
 import { ObjectID } from 'mongodb';
 
-// let task = {
-// 	_id: 'string',
-// 	name: 'string',
-// 	description: 'string',
-// 	status: 'string',
-// 	creatorId: 'string',
-// 	assigneeId: 'string',
-// 	workgroupId: 'string'
-// };
+let issue = {
+	_id: 'string',
+	name: 'string',
+	description: 'string'
+};
 
-export default class TaskModel {
+export default class IssueModel {
 
 	constructor(db) {
 		this._db = db;
-		this._table = 'task';
+		this._table = 'issue';
 	}
 
 	async create(data) {
@@ -60,36 +56,6 @@ export default class TaskModel {
 	async queryByFields(fields = {}) {
 		try {
 			const result = await this._db.collection(this._table).find(fields).toArray();
-			return await result;
-		} catch (error) {
-			return Promise.reject(error.message);
-		}
-	}
-
-	async lookupByFields(fields = {}) {
-		const lookupWorkgroup = {
-			from: 'workgroup',
-			let: { workgroupId: '$workgroupId' },
-			pipeline: [
-				{ $match: { $expr: { $eq: ['$_id', '$$workgroupId'] } } },
-				{ $project: { name: 1 } }
-			],
-			as: 'workgroup'
-		};
-		const lookupAssignee = {
-			from: 'user',
-			let: { assigneeId: '$assigneeId' },
-			pipeline: [
-				{ $match: { $expr: { $eq: ['$_id', '$$assigneeId'] } } },
-				{ $project: { firstName: 1, lastName: 1, email: 1 } }
-			],
-			as: 'assignee'
-		};
-		const aggregate = [{ $match: fields },
-		{ $lookup: lookupWorkgroup }, { $unwind: { path: '$workgroup', preserveNullAndEmptyArrays: true } },
-		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } }];
-		try {
-			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return await result;
 		} catch (error) {
 			return Promise.reject(error.message);

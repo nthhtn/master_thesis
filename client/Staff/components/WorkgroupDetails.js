@@ -1,4 +1,4 @@
-import React, { Component, PureComponent } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import swal from 'sweetalert2';

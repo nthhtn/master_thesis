@@ -15,8 +15,8 @@ class TicketSectorItem extends PureComponent {
 		const { name, description, color, _id, showModal } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description, color })}>
-				<td className="font-w600 font-size-sm">{name}</td>
-				<td className="font-size-sm"><em className="text-muted">{description}</em></td>
+				<td className="font-w600">{name}</td>
+				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{description}</td>
 				<td style={{ backgroundColor: color }}></td>
 			</tr>
 		);
@@ -87,7 +87,7 @@ export default class TicketSector extends Component {
 				<div className="bg-body-light">
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-							<h1 className="flex-sm-fill h3 my-2">List of Ticket Sectors</h1>
+							<h1 className="flex-sm-fill h3 my-2">List of ticket sectors</h1>
 						</div>
 					</div>
 				</div>

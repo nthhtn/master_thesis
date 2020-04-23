@@ -127,7 +127,7 @@ export default class CustomerDetails extends Component {
 	}
 
 	render() {
-		const listTicket = this.props.ticket.list;
+		const list = this.props.ticket.list;
 		const listSector = this.props.ticketSector.list;
 		return (
 			<main id="main-container">
@@ -248,7 +248,7 @@ export default class CustomerDetails extends Component {
 									<div className="pull-x">
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
-												{listTicket.map((item) => {
+												{list.map((item) => {
 													return (<TicketItem key={item._id} {...item} history={self.props.history} />)
 												})}
 											</tbody>

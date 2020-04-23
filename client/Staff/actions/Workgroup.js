@@ -15,19 +15,19 @@ export function createWorkgroup(workgroup) {
 
 export function createWorkgroupSuccess(workgroup) {
 	return { type: 'CREATE_WORKGROUP', workgroup };
-}
+};
 
 export function listWorkgroup() {
 	return async (dispatch) => {
 		const response = await fetch(`/api/workgroups`, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listWorkgroupSuccess(responseJson.result));
-	}
-}
+	};
+};
 
 export function listWorkgroupSuccess(list) {
 	return { type: 'LIST_WORKGROUP', list };
-}
+};
 
 export function getWorkgroupDetails(id) {
 	return async (dispatch) => {
@@ -37,11 +37,11 @@ export function getWorkgroupDetails(id) {
 		dispatch(getWorkgroupDetailsSuccess(workgroup));
 		dispatch(listConversation({ workgroupId: id }));
 	};
-}
+};
 
 export function getWorkgroupDetailsSuccess(workgroup) {
 	return { type: 'GET_WORKGROUP_DETAILS', workgroup };
-}
+};
 
 export function addWorkgroupMembers(id, list) {
 	return async (dispatch) => {
@@ -55,11 +55,11 @@ export function addWorkgroupMembers(id, list) {
 		const result = responseJson.result;
 		dispatch(addWorkgroupMembersSuccess(list));
 	};
-}
+};
 
 export function addWorkgroupMembersSuccess(list) {
 	return { type: 'ADD_WORKGROUP_MEMBERS', list };
-}
+};
 
 export function removeWorkgroupMembers(id, list) {
 	return async (dispatch) => {
@@ -73,8 +73,8 @@ export function removeWorkgroupMembers(id, list) {
 		const result = responseJson.result;
 		dispatch(removeWorkgroupMembersSuccess(list));
 	};
-}
+};
 
 export function removeWorkgroupMembersSuccess(list) {
 	return { type: 'REMOVE_WORKGROUP_MEMBERS', list };
-}
+};

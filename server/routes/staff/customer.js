@@ -45,7 +45,6 @@ module.exports = (app, db) => {
 		.delete(async (req, res) => {
 			try {
 				const result = await Customer.delete(req.params.id);
-				console.log(result);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

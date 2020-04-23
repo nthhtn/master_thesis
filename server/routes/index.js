@@ -16,6 +16,7 @@ module.exports = (app, db) => {
 	require('./staff/index')(app, db);
 
 	require('./manager/ticketSector')(app, db);
+	require('./manager/issue')(app, db);
 
 	app.route('/logout')
 		.get((req, res) => {

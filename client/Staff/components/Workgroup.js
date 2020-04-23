@@ -98,7 +98,7 @@ export default class Workgroup extends Component {
 				<div className="bg-body-light">
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-							<h1 className="flex-sm-fill h3 my-2">List of Workgroups</h1>
+							<h1 className="flex-sm-fill h3 my-2">List of workgroups</h1>
 							<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-workgroup">
 								<i className="fa fa-plus"></i> New
 							</button>

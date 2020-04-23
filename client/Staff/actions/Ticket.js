@@ -13,7 +13,7 @@ export function createTicket(ticket) {
 
 export function createTicketSuccess(ticket) {
 	return { type: 'CREATE_TICKET', ticket };
-}
+};
 
 export function listTicket(query = {}) {
 	return async (dispatch) => {
@@ -22,12 +22,12 @@ export function listTicket(query = {}) {
 		const response = await fetch(url, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listTicketSuccess(responseJson.result));
-	}
-}
+	};
+};
 
 export function listTicketSuccess(list) {
 	return { type: 'LIST_TICKET', list };
-}
+};
 
 export function getTicketDetails(id) {
 	return async (dispatch) => {
@@ -42,11 +42,11 @@ export function getTicketDetails(id) {
 		const sector = responseJson.result;
 		dispatch(getTicketDetailsSuccess({ ...ticket, owner, sector }));
 	};
-}
+};
 
 export function getTicketDetailsSuccess(ticket) {
 	return { type: 'GET_TICKET_DETAILS', ticket };
-}
+};
 
 export function addTicketComment(ticketId, comment, commenter) {
 	return async (dispatch) => {
@@ -65,7 +65,7 @@ export function addTicketComment(ticketId, comment, commenter) {
 
 export function addTicketCommentSuccess(comment) {
 	return { type: 'ADD_TICKET_COMMENT', comment };
-}
+};
 
 export function listTicketComment(ticketId) {
 	return async (dispatch) => {
@@ -74,8 +74,8 @@ export function listTicketComment(ticketId) {
 		const responseJson = await response.json();
 		dispatch(listTicketCommentSuccess(responseJson.result));
 	};
-}
+};
 
 export function listTicketCommentSuccess(comments) {
 	return { type: 'LIST_TICKET_COMMENT', comments };
-}
+};

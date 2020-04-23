@@ -5,6 +5,7 @@ import { ObjectID } from 'mongodb';
 // 	title: 'string',
 // 	message: 'string',
 // 	status: 'string',
+// 	severity: 'string',
 // 	ownerId: 'string',
 // 	assigneeId: 'string',
 // 	issueId: 'string',

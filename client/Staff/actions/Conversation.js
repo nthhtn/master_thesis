@@ -14,7 +14,7 @@ export function createConversation(conversation, creator) {
 
 export function createConversationSuccess(conversation) {
 	return { type: 'CREATE_CONVERSATION', conversation };
-}
+};
 
 export function listConversation(query = {}) {
 	return async (dispatch) => {
@@ -24,11 +24,11 @@ export function listConversation(query = {}) {
 		const responseJson = await response.json();
 		dispatch(listConversationSuccess(responseJson.result));
 	};
-}
+};
 
 export function listConversationSuccess(list) {
 	return { type: 'LIST_CONVERSATION', list };
-}
+};
 
 
 export function getConversationDetails(id) {
@@ -41,11 +41,11 @@ export function getConversationDetails(id) {
 		const creator = responseJson.result;
 		dispatch(getConversationDetailsSuccess({ ...conversation, creator }));
 	};
-}
+};
 
 export function getConversationDetailsSuccess(conversation) {
 	return { type: 'GET_CONVERSATION_DETAILS', conversation };
-}
+};
 
 export function addConversationComment(id, comment, commenter) {
 	return async (dispatch) => {
@@ -63,7 +63,7 @@ export function addConversationComment(id, comment, commenter) {
 
 export function addConversationCommentSuccess(comment) {
 	return { type: 'ADD_CONVERSATION_COMMENT', comment };
-}
+};
 
 export function listConversationComment(id) {
 	return async (dispatch) => {
@@ -72,8 +72,8 @@ export function listConversationComment(id) {
 		const responseJson = await response.json();
 		dispatch(listConversationCommentSuccess(responseJson.result));
 	};
-}
+};
 
 export function listConversationCommentSuccess(comments) {
 	return { type: 'LIST_CONVERSATION_COMMENT', comments };
-}
+};

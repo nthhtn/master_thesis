@@ -124,7 +124,7 @@ export default class Customer extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createCustomer}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createCustomer}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>

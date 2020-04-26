@@ -130,7 +130,7 @@ store.dispatch(getMyProfile()).then(() => {
 												<i className="si si-user ml-1"></i>
 											</a>
 											<a className="dropdown-item d-flex align-items-center justify-content-between" href="/logout">
-												<span>Log Out</span>
+												<span>Logout</span>
 												<i className="si si-logout ml-1"></i>
 											</a>
 										</div>

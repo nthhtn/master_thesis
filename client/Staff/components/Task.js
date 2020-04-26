@@ -47,7 +47,7 @@ export default class Task extends Component {
 		const description = $('#create-task-description').val();
 		const status = $('#create-task-status').val();
 		if (!name || !description || status == 0) {
-			$('#create-task-error').text('Invalid field(s)');
+			$('#create-task-error').text('Missing required field(s)(s)');
 			return;
 		}
 		// await self.props.dispatch(createTask({ name, description, status, sectorId }));
@@ -138,7 +138,7 @@ export default class Task extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTask}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTask}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>

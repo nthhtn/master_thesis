@@ -61,12 +61,6 @@ class ConversationItem extends Component {
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(createdAt)}</em>
 				</td>
-				<td className="text-center" style={{ width: '5%' }}>
-					<div className="custom-control custom-checkbox">
-						<input type="checkbox" className="custom-control-input" id={'btn-conv-' + _id} />
-						<label className="custom-control-label font-w400" htmlFor={'btn-conv-' + _id}></label>
-					</div>
-				</td>
 			</tr>
 		);
 	}
@@ -98,7 +92,7 @@ export default class WorkgroupDetails extends Component {
 		const title = $('#create-conversation-title').val();
 		const content = $('#create-conversation-content').val();
 		if (!title || !content) {
-			$('#create-conversation-error').text('All fields must not be empty!');
+			$('#create-conversation-error').text('Missing required field(s)!');
 			return;
 		}
 		$('#create-conversation-error').text('');
@@ -207,7 +201,7 @@ export default class WorkgroupDetails extends Component {
 														</div>
 														<div className="block-content block-content-full text-right border-top">
 															<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-															<button type="button" className="btn btn-sm btn-primary" onClick={this.addMember}><i className="fa fa-check"></i>Ok</button>
+															<button type="button" className="btn btn-sm btn-primary" onClick={this.addMember}><i className="fa fa-check"></i> Ok</button>
 														</div>
 													</div>
 												</div>
@@ -260,7 +254,7 @@ export default class WorkgroupDetails extends Component {
 													</div>
 													<div className="block-content block-content-full text-right border-top">
 														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-														<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check"></i>Ok</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check"></i> Ok</button>
 													</div>
 												</div>
 											</div>

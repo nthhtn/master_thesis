@@ -90,14 +90,15 @@ export default class Ticket extends Component {
 											<hr />
 											<h4>
 												<span className={'badge badge-' + statusClass[status]}>{status}</span>
+												<span className='badge badge-info'>severity</span>
 												<span className='badge badge-info' style={{ backgroundColor: sector ? sector.color : 'transparent' }}>
 													{sector ? sector.name : ''}
 												</span>
 											</h4>
 											<div className="row">
 												<div className="form-group col-sm-3">
-													<label htmlFor="create-ticket-status">Status</label>
-													<select className="form-control" id="create-ticket-status">
+													<label htmlFor="update-ticket-status">Status</label>
+													<select className="form-control" id="update-ticket-status">
 														<option value="0">Please select</option>
 														<option value="open">Open</option>
 														<option value="new">New</option>
@@ -107,8 +108,14 @@ export default class Ticket extends Component {
 													</select>
 												</div>
 												<div className="form-group col-sm-3">
-													<label htmlFor="create-ticket-sector">Sector</label>
-													<select className="form-control" id="create-ticket-sector">
+													<label htmlFor="update-ticket-severity">Severity</label>
+													<select className="form-control" id="update-ticket-severity">
+														<option value="0">Please select</option>
+													</select>
+												</div>
+												<div className="form-group col-sm-3">
+													<label htmlFor="update-ticket-sector">Sector</label>
+													<select className="form-control" id="update-ticket-sector">
 														<option value="0">Please select</option>
 													</select>
 												</div>

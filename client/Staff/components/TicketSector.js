@@ -15,9 +15,9 @@ class TicketSectorItem extends PureComponent {
 		const { name, description, color, _id, showModal } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description, color })}>
-				<td className="font-w600">{name}</td>
-				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{description}</td>
-				<td style={{ backgroundColor: color }}></td>
+				<td className="font-w600" style={{ width: '10%' }}>{name}</td>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{description}</td>
+				<td style={{ backgroundColor: color, width: '10%' }}></td>
 			</tr>
 		);
 	}
@@ -37,7 +37,7 @@ export default class TicketSector extends Component {
 		const description = $('#create-sector-description').val();
 		const color = $('#create-sector-color').val();
 		if (!name || !description || !color) {
-			$('#create-sector-error').text('All fields must not be empty!');
+			$('#create-sector-error').text('Missing required field(s)!');
 			return;
 		}
 		await self.props.dispatch(createTicketSector({ name, description, color }));
@@ -47,7 +47,7 @@ export default class TicketSector extends Component {
 		$('#modal-create-sector').modal('hide');
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		jQuery(() => {
 			One.helpers(['colorpicker']);
 			$('#create-sector-color').colorpicker();
@@ -62,7 +62,7 @@ export default class TicketSector extends Component {
 		const description = $('#update-sector-description').val();
 		const color = $('#update-sector-color').val();
 		if (!_id || !name || !description || !color) {
-			$('#update-sector-error').text('All fields must not be empty!');
+			$('#update-sector-error').text('Missing required field(s)!');
 			return;
 		}
 		await self.props.dispatch(updateTicketSector(_id, { name, description, color }));
@@ -122,7 +122,7 @@ export default class TicketSector extends Component {
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="create-sector-email">Description*</label>
-														<textarea row="4" className="form-control" id="create-sector-description" />
+														<textarea rows="4" className="form-control" id="create-sector-description" />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="create-sector-color">Label Color*</label>
@@ -135,7 +135,7 @@ export default class TicketSector extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicketSector}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicketSector}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>
@@ -165,7 +165,7 @@ export default class TicketSector extends Component {
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-sector-email">Description*</label>
-														<textarea row="4" className="form-control" id="update-sector-description" />
+														<textarea rows="4" className="form-control" id="update-sector-description" />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-sector-color">Label Color*</label>
@@ -178,7 +178,7 @@ export default class TicketSector extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateTicketSector}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateTicketSector}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>

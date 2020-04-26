@@ -71,7 +71,7 @@ export default class Workgroup extends Component {
 		const description = $('#create-workgroup-description').val().trim();
 		const members = self.state.selected.map((item) => (item._id)).concat([self.props.user.me._id]);
 		if (!name || !description) {
-			$('#create-workgroup-error').text('All fields must not be empty!');
+			$('#create-workgroup-error').text('Missing required field(s)!');
 			return;
 		}
 		self.props.dispatch(createWorkgroup({ name, description, members }));
@@ -144,7 +144,7 @@ export default class Workgroup extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createWorkgroup}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createWorkgroup}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>

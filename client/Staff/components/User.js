@@ -41,7 +41,7 @@ export default class User extends Component {
 		const lastName = $('#create-user-lastname').val();
 		const userType = $('#create-user-type').val();
 		if (!firstName || !lastName || userType == 0) {
-			$('#create-user-error').text('Invalid field(s)');
+			$('#create-user-error').text('Missing required field(s)(s)');
 			return;
 		}
 		// await self.props.dispatch(createUser({ firstName, lastName, userType, sectorId }));
@@ -115,7 +115,7 @@ export default class User extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createUser}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createUser}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>

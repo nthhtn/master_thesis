@@ -30,6 +30,7 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
+				<td>severity</td>
 				<td>{owner.fullName}</td>
 				<td>{assignee}</td>
 				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
@@ -54,7 +55,7 @@ export default class Ticket extends Component {
 		const status = $('#create-ticket-status').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
 		if (!title || !message || status == 0) {
-			$('#create-ticket-error').text('Invalid field(s)');
+			$('#create-ticket-error').text('Missing required field(s)(s)');
 			return;
 		}
 		await self.props.dispatch(createTicket({ title, message, status, sectorId }));
@@ -127,12 +128,34 @@ export default class Ticket extends Component {
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
+														<label htmlFor="create-ticket-severity">Severity</label>
+														<select className="form-control" id="create-ticket-severity">
+															<option value="0">Please select</option>
+															<option value="open">Open</option>
+															<option value="new">New</option>
+															<option value="inprogress">In Progress</option>
+															<option value="resolved">Resolved</option>
+															<option value="closed">Closed</option>
+														</select>
+													</div>
+													<div className="form-group col-sm-6">
 														<label htmlFor="create-ticket-sector">Sector</label>
 														<select className="form-control" id="create-ticket-sector">
 															<option value="0">Please select</option>
 															{listSector.map((sector) =>
 																(<option key={sector._id} value={sector._id} style={{ color: sector.color }}>{sector.name}</option>))
 															}
+														</select>
+													</div>
+													<div className="form-group col-sm-6">
+														<label htmlFor="create-ticket-assignee">Assignee</label>
+														<select className="form-control" id="create-ticket-assignee">
+															<option value="0">Please select</option>
+															<option value="open">Open</option>
+															<option value="new">New</option>
+															<option value="inprogress">In Progress</option>
+															<option value="resolved">Resolved</option>
+															<option value="closed">Closed</option>
 														</select>
 													</div>
 													<div className="form-group col-sm-12">
@@ -142,7 +165,7 @@ export default class Ticket extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check"></i>Ok</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.createTicket}><i className="fa fa-check"></i> Ok</button>
 											</div>
 										</div>
 									</div>
@@ -155,8 +178,9 @@ export default class Ticket extends Component {
 											<th style={{ width: '20%' }}>Title</th>
 											<th style={{ width: '20%' }}>Message</th>
 											<th style={{ width: '10%' }}>Status</th>
-											<th style={{ width: '15%' }}>Customer</th>
-											<th style={{ width: '15%' }}>Assignee</th>
+											<th style={{ width: '10%' }}>Severity</th>
+											<th style={{ width: '10%' }}>Customer</th>
+											<th style={{ width: '10%' }}>Assignee</th>
 											<th style={{ width: '10%' }}>Sector</th>
 											<th style={{ width: '10%' }}>Created at</th>
 										</tr>

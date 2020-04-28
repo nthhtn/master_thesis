@@ -17,7 +17,7 @@ class UserItem extends Component {
 		const typeClass = { staff: 'primary', manager: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }}>
-				<td>{firstName + ' ' + lastName}</td>
+				<td className="font-w600" style={{ color: '#5c80d1' }}>{firstName + ' ' + lastName}</td>
 				<td><em className="text-muted">{email}</em></td>
 				<td>{phone}</td>
 				<td>{address}</td>

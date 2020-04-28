@@ -21,8 +21,9 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, createdAt, sector, status } = this.props;
+		const { _id, title, message, createdAt, sector, status, severity } = this.props;
 		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td style={{ width: '20%' }}>
@@ -32,11 +33,12 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
-				<td>severity</td>
+				<td><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ color: sector ? sector.color : 'black' }}>
 					{sector ? sector.name : ''}
 				</td>
-				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
+				<td className="d-none d-sm-table-cell font-w600">Assignee</td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '15%' }}>
 					<em>{toDateString(createdAt)}</em>
 				</td>
 			</tr>
@@ -114,12 +116,13 @@ export default class CustomerDetails extends Component {
 		const title = $('#create-ticket-title').val();
 		const message = $('#create-ticket-message').val();
 		const status = $('#create-ticket-status').val();
+		const severity = $('#create-ticket-severity').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
 		if (!title || !message || status == 0) {
 			$('#create-ticket-error').text('Missing required field(s)(s)');
 			return;
 		}
-		const data = { title, message, ownerId: self.state.customerId, status, sectorId };
+		const data = { title, message, ownerId: self.state.customerId, status, severity, sectorId };
 		await self.props.dispatch(createTicket(data));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
@@ -174,7 +177,7 @@ export default class CustomerDetails extends Component {
 											</div>
 											<div className="form-group col-sm-12 text-right">
 												<button type="button" className="btn btn-sm btn-danger" onClick={this.deleteCustomer}>Delete</button>
-												<button type="button" className="btn btn-sm btn-info" onClick={this.updateCustomer}>Save</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateCustomer}>Save</button>
 											</div>
 										</div>
 									</div>
@@ -213,7 +216,7 @@ export default class CustomerDetails extends Component {
 																<textarea rows="4" className="form-control" id="create-ticket-message" />
 															</div>
 															<div className="form-group col-sm-6">
-																<label htmlFor="create-ticket-status">Status</label>
+																<label htmlFor="create-ticket-status">Status*</label>
 																<select className="form-control" id="create-ticket-status">
 																	<option value="0">Please select</option>
 																	<option value="open">Open</option>
@@ -224,14 +227,13 @@ export default class CustomerDetails extends Component {
 																</select>
 															</div>
 															<div className="form-group col-sm-6">
-																<label htmlFor="create-ticket-severity">Severity</label>
+																<label htmlFor="create-ticket-severity">Severity*</label>
 																<select className="form-control" id="create-ticket-severity">
 																	<option value="0">Please select</option>
-																	<option value="open">Open</option>
-																	<option value="new">New</option>
-																	<option value="inprogress">In Progress</option>
-																	<option value="resolved">Resolved</option>
-																	<option value="closed">Closed</option>
+																	<option value="low">Low</option>
+																	<option value="normal">Normal</option>
+																	<option value="high">High</option>
+																	<option value="urgent">Urgent</option>
 																</select>
 															</div>
 															<div className="form-group col-sm-6">

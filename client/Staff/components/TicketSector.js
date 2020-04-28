@@ -15,7 +15,7 @@ class TicketSectorItem extends PureComponent {
 		const { name, description, color, _id, showModal } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description, color })}>
-				<td className="font-w600" style={{ width: '10%' }}>{name}</td>
+				<td className="font-w600" style={{ width: '10%', color: '#5c80d1' }}>{name}</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{description}</td>
 				<td style={{ backgroundColor: color, width: '10%' }}></td>
 			</tr>

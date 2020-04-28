@@ -4,6 +4,17 @@ import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import { listWorkgroup, createWorkgroup } from '../actions/Workgroup';
 
+const titleStyle = {
+	whiteSpace: 'nowrap',
+	overflow: 'hidden',
+	textOverflow: 'ellipsis'
+};
+const textStyle = {
+	...titleStyle,
+	height: '87px',
+	whiteSpace: 'pre-wrap'
+};
+
 let self;
 
 class WorkgroupItem extends Component {
@@ -14,25 +25,13 @@ class WorkgroupItem extends Component {
 	}
 
 	render() {
-		const titleStyle = {
-			whiteSpace: 'nowrap',
-			overflow: 'hidden',
-			textOverflow: 'ellipsis'
-		};
-		const textStyle = {
-			...titleStyle,
-			height: '87px',
-			whiteSpace: 'pre-wrap'
-		}
 		const { workgroupId, workgroupName, workgroupDescription } = this.props;
 		return (
 			<div className="col-sm-6 col-xl-4">
 				<div className="block">
 					<div className="block-header">
 						<Link to={`/workgroups/${workgroupId}`} style={titleStyle}>
-							<h3 className="block-title">
-								{workgroupName}
-							</h3>
+							<h3 className="block-title">{workgroupName}</h3>
 						</Link>
 					</div>
 					<div className="block-content block-content-full text-center">

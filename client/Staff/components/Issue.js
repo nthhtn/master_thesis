@@ -15,7 +15,7 @@ class IssueItem extends Component {
 		const { _id, name, description, reproduction, resolution, color, showModal } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={() => showModal({ _id, name, description, reproduction, resolution, color })}>
-				<td className="font-w600" style={{ width: '10%' }}>{name}</td>
+				<td className="font-w600" style={{ width: '10%', color: '#5c80d1' }}>{name}</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{description}</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{reproduction}</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{resolution}</td>
@@ -57,6 +57,7 @@ export default class Issue extends Component {
 		jQuery(() => {
 			One.helpers(['colorpicker']);
 			$('#create-issue-color').colorpicker();
+			$('#update-issue-color').colorpicker();
 		});
 	}
 
@@ -129,15 +130,15 @@ export default class Issue extends Component {
 														<input type="text" className="form-control" id="create-issue-name" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-issue-description">Description*</label>
+														<label htmlFor="create-issue-description">Behaviour Description*</label>
 														<textarea rows="4" className="form-control" id="create-issue-description" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-issue-reproduction">Reproduction*</label>
+														<label htmlFor="create-issue-reproduction">Reproduction Steps*</label>
 														<textarea rows="6" className="form-control" id="create-issue-reproduction" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-issue-resolution">Resolution*</label>
+														<label htmlFor="create-issue-resolution">Resolution Mechanism*</label>
 														<textarea rows="6" className="form-control" id="create-issue-resolution" />
 													</div>
 													<div className="form-group col-sm-12">
@@ -180,15 +181,15 @@ export default class Issue extends Component {
 														<input type="text" className="form-control" id="update-issue-name" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="update-issue-description">Description*</label>
+														<label htmlFor="update-issue-description">Behaviour Description*</label>
 														<textarea rows="4" className="form-control" id="update-issue-description" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="update-issue-reproduction">Reproduction*</label>
+														<label htmlFor="update-issue-reproduction">Reproduction Steps*</label>
 														<textarea rows="6" className="form-control" id="update-issue-reproduction" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="update-issue-resolution">Resolution*</label>
+														<label htmlFor="update-issue-resolution">Resolution Mechanism*</label>
 														<textarea rows="6" className="form-control" id="update-issue-resolution" />
 													</div>
 													<div className="form-group col-sm-12">
@@ -213,9 +214,9 @@ export default class Issue extends Component {
 									<thead>
 										<tr>
 											<th>Issue name</th>
-											<th>Description</th>
-											<th>Reproduction</th>
-											<th>Resolution</th>
+											<th>Behaviour Description</th>
+											<th>Reproduction Steps</th>
+											<th>Resolution Mechanism</th>
 											<th>Label color</th>
 										</tr>
 									</thead>

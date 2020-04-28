@@ -46,6 +46,9 @@ export default class Task extends Component {
 		const name = $('#create-task-name').val();
 		const description = $('#create-task-description').val();
 		const status = $('#create-task-status').val();
+		const dueAt = $('#create-task-due').val();
+		console.log(dueAt);
+		console.log(Date.parse(new Date(dueAt)));
 		if (!name || !description || status == 0) {
 			$('#create-task-error').text('Missing required field(s)(s)');
 			return;
@@ -59,7 +62,7 @@ export default class Task extends Component {
 	}
 
 	async componentDidMount() {
-		$('#create-task-due').datetimepicker();
+		$('#create-task-due').datetimepicker({ minDate: new Date(), disabledDates: [new Date()] });
 		// this.props.dispatch(listTask());
 	}
 

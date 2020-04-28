@@ -19,8 +19,9 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, owner, assignee, sector, status, createdAt } = this.props;
+		const { _id, title, message, owner, assignee, sector, status, severity, createdAt } = this.props;
 		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td className="font-w600">
@@ -30,10 +31,10 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
-				<td>severity</td>
+				<td><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
 				<td>{owner.fullName}</td>
-				<td>{assignee}</td>
 				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
+				<td>{assignee}</td>
 				<td>{toDateString(createdAt)}</td>
 			</tr>
 		);
@@ -53,12 +54,13 @@ export default class Ticket extends Component {
 		const title = $('#create-ticket-title').val();
 		const message = $('#create-ticket-message').val();
 		const status = $('#create-ticket-status').val();
+		const severity = $('#create-ticket-severity').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
-		if (!title || !message || status == 0) {
+		if (!title || !message || status == 0 || severity == 0) {
 			$('#create-ticket-error').text('Missing required field(s)(s)');
 			return;
 		}
-		await self.props.dispatch(createTicket({ title, message, status, sectorId }));
+		await self.props.dispatch(createTicket({ title, message, status, severity, sectorId }));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
 		$('#modal-create-ticket textarea').val('');
@@ -117,7 +119,7 @@ export default class Ticket extends Component {
 														<textarea rows="4" className="form-control" id="create-ticket-message" />
 													</div>
 													<div className="form-group col-sm-6">
-														<label htmlFor="create-ticket-status">Status</label>
+														<label htmlFor="create-ticket-status">Status*</label>
 														<select className="form-control" id="create-ticket-status">
 															<option value="0">Please select</option>
 															<option value="open">Open</option>
@@ -128,14 +130,13 @@ export default class Ticket extends Component {
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
-														<label htmlFor="create-ticket-severity">Severity</label>
+														<label htmlFor="create-ticket-severity">Severity*</label>
 														<select className="form-control" id="create-ticket-severity">
 															<option value="0">Please select</option>
-															<option value="open">Open</option>
-															<option value="new">New</option>
-															<option value="inprogress">In Progress</option>
-															<option value="resolved">Resolved</option>
-															<option value="closed">Closed</option>
+															<option value="low">Low</option>
+															<option value="normal">Normal</option>
+															<option value="high">High</option>
+															<option value="urgent">Urgent</option>
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
@@ -180,8 +181,8 @@ export default class Ticket extends Component {
 											<th style={{ width: '10%' }}>Status</th>
 											<th style={{ width: '10%' }}>Severity</th>
 											<th style={{ width: '10%' }}>Customer</th>
-											<th style={{ width: '10%' }}>Assignee</th>
 											<th style={{ width: '10%' }}>Sector</th>
+											<th style={{ width: '10%' }}>Assignee</th>
 											<th style={{ width: '10%' }}>Created at</th>
 										</tr>
 									</thead>

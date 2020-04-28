@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { getTicketDetails, getTicketDetailsSuccess, addTicketComment, listTicketComment } from '../actions/Ticket';
+import { listTicketSector } from '../actions/TicketSector';
 import { toDateString } from '../helpers';
 
 let self;
@@ -38,12 +39,20 @@ export default class Ticket extends Component {
 		self = this;
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		const { ticketId } = this.state;
 		let ticket = this.props.ticket.list.find((item) => item._id === ticketId);
-		ticket ? this.props.dispatch(getTicketDetailsSuccess(ticket))
-			: this.props.dispatch(getTicketDetails(ticketId));
-		this.props.dispatch(listTicketComment(ticketId));
+		if (!ticket) {
+			await this.props.dispatch(getTicketDetails(ticketId));
+			ticket = this.props.ticket.current;
+		} else {
+			await this.props.dispatch(getTicketDetailsSuccess(ticket));
+		}
+		await this.props.dispatch(listTicketComment(ticketId));
+		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
+		$('#update-ticket-status').val(ticket.status);
+		$('#update-ticket-severity').val(ticket.severity);
+		$('#update-ticket-sector').val(ticket.sectorId || 0);
 	}
 
 	async addComment() {
@@ -57,9 +66,11 @@ export default class Ticket extends Component {
 
 	render() {
 		const { comments, current } = this.props.ticket;
-		const { owner, title, message, status, sector, createdAt } = current;
+		const { owner, title, message, status, severity, sector, createdAt } = current;
 		const { firstName, lastName } = this.props.user.me;
+		const listSector = this.props.ticketSector.list;
 		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -88,16 +99,11 @@ export default class Ticket extends Component {
 											<em>{toDateString(createdAt)}</em>
 											<div style={{ whiteSpace: 'pre-wrap' }}>{message}</div>
 											<hr />
-											<h4>
-												<span className={'badge badge-' + statusClass[status]}>{status}</span>
-												<span className='badge badge-info'>severity</span>
-												<span className='badge badge-info' style={{ backgroundColor: sector ? sector.color : 'transparent' }}>
-													{sector ? sector.name : ''}
-												</span>
-											</h4>
 											<div className="row">
-												<div className="form-group col-sm-3">
-													<label htmlFor="update-ticket-status">Status</label>
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-status">Status&nbsp;
+													<span className={'badge badge-' + statusClass[status]}>{status}</span>
+													</label>
 													<select className="form-control" id="update-ticket-status">
 														<option value="0">Please select</option>
 														<option value="open">Open</option>
@@ -107,17 +113,35 @@ export default class Ticket extends Component {
 														<option value="closed">Closed</option>
 													</select>
 												</div>
-												<div className="form-group col-sm-3">
-													<label htmlFor="update-ticket-severity">Severity</label>
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-severity">Severity&nbsp;
+													<span className={'badge badge-' + severityClass[severity]}>{severity}</span>
+													</label>
 													<select className="form-control" id="update-ticket-severity">
 														<option value="0">Please select</option>
+														<option value="low">Low</option>
+														<option value="normal">Normal</option>
+														<option value="high">High</option>
+														<option value="urgent">Urgent</option>
 													</select>
 												</div>
-												<div className="form-group col-sm-3">
-													<label htmlFor="update-ticket-sector">Sector</label>
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-sector">Sector&nbsp;
+													<span className='badge badge-info' style={{ backgroundColor: sector ? sector.color : 'transparent' }}>
+															{sector ? sector.name : ''}
+														</span>
+													</label>
 													<select className="form-control" id="update-ticket-sector">
 														<option value="0">Please select</option>
+														{listSector.map((sector) =>
+															(<option key={sector._id} value={sector._id} style={{ color: sector.color }}>{sector.name}</option>))
+														}
 													</select>
+												</div>
+												<div className="form-group col-sm-2">
+													<button type="button" className="btn btn-sm btn-primary" style={{ position: 'absolute', bottom: 0 }}>
+														<i className="fa fa-check"></i> Save
+													</button>
 												</div>
 											</div>
 										</td>

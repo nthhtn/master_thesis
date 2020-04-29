@@ -35,6 +35,14 @@ module.exports = (app, db) => {
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}
+		})
+		.put(async (req, res) => {
+			try {
+				const result = await Ticket.update(req.params.id, req.body);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
 		});
 
 	router.route('/:id/comments')

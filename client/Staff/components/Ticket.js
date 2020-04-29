@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { createTicket, listTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
+import { listIssue } from '../actions/Issue';
 import { toDateString } from '../helpers';
 
 let self;
@@ -19,21 +20,22 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, owner, assignee, sector, status, severity, createdAt } = this.props;
+		const { _id, title, message, owner, assignee, sector, issue, status, severity, createdAt } = this.props;
 		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
 		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td className="font-w600">
+				<td className="font-w600" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
 				</td>
 				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
 				</td>
+				<td>{owner.fullName}</td>
 				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
-				<td>{owner.fullName}</td>
 				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
+				<td style={{ color: issue ? issue.color : 'black' }}>{issue ? issue.name : ''}</td>
 				<td>{assignee}</td>
 				<td>{toDateString(createdAt)}</td>
 			</tr>
@@ -70,12 +72,14 @@ export default class Ticket extends Component {
 
 	async componentDidMount() {
 		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
+		this.props.issue.list.length == 0 && await this.props.dispatch(listIssue());
 		this.props.dispatch(listTicket());
 	}
 
 	render() {
 		const list = this.props.ticket.list;
 		const listSector = this.props.ticketSector.list;
+		const listIssue = this.props.issue.list;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -149,6 +153,15 @@ export default class Ticket extends Component {
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
+														<label htmlFor="create-ticket-issue">Issue</label>
+														<select className="form-control" id="create-ticket-issue">
+															<option value="0">Please select</option>
+															{listIssue.map((issue) =>
+																(<option key={issue._id} value={issue._id} style={{ color: issue.color }}>{issue.name}</option>))
+															}
+														</select>
+													</div>
+													<div className="form-group col-sm-6">
 														<label htmlFor="create-ticket-assignee">Assignee</label>
 														<select className="form-control" id="create-ticket-assignee">
 															<option value="0">Please select</option>
@@ -176,12 +189,13 @@ export default class Ticket extends Component {
 								<table className="table table-bordered table-striped table-vcenter">
 									<thead>
 										<tr>
-											<th style={{ width: '20%' }}>Title</th>
-											<th style={{ width: '20%' }}>Message</th>
-											<th style={{ width: '10%' }}>Status</th>
-											<th style={{ width: '10%' }}>Severity</th>
+											<th style={{ width: '14%' }}>Title</th>
+											<th style={{ width: '24%' }}>Message</th>
 											<th style={{ width: '10%' }}>Customer</th>
-											<th style={{ width: '10%' }}>Sector</th>
+											<th style={{ width: '8%' }}>Status</th>
+											<th style={{ width: '8%' }}>Severity</th>
+											<th style={{ width: '8%' }}>Sector</th>
+											<th style={{ width: '8%' }}>Issue</th>
 											<th style={{ width: '10%' }}>Assignee</th>
 											<th style={{ width: '10%' }}>Created at</th>
 										</tr>

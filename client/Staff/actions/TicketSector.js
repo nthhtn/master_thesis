@@ -43,7 +43,7 @@ export function updateTicketSector(id, data) {
 
 export function updateTicketSectorSuccess(sector) {
 	return { type: 'UPDATE_TICKET_SECTOR', sector };
-}
+};
 
 export function deleteTicketSector(id) {
 	return async (dispatch) => {

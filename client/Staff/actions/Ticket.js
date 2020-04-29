@@ -40,7 +40,10 @@ export function getTicketDetails(id) {
 		response = await fetch(`/api/ticketsectors/${ticket.sectorId}`, { credentials: 'same-origin' });
 		responseJson = await response.json();
 		const sector = responseJson.result;
-		dispatch(getTicketDetailsSuccess({ ...ticket, owner, sector }));
+		response = await fetch(`/api/issues/${ticket.issueId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const issue = responseJson.result;
+		dispatch(getTicketDetailsSuccess({ ...ticket, owner, sector, issue }));
 	};
 };
 
@@ -58,7 +61,6 @@ export function addTicketComment(ticketId, comment, commenter) {
 			body: JSON.stringify(comment)
 		});
 		const responseJson = await response.json();
-		console.log(responseJson);
 		dispatch(addTicketCommentSuccess({ ...responseJson.result, commenter }));
 	};
 };
@@ -78,4 +80,28 @@ export function listTicketComment(ticketId) {
 
 export function listTicketCommentSuccess(comments) {
 	return { type: 'LIST_TICKET_COMMENT', comments };
+};
+
+export function updateTicket(id, data) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/tickets/${id}`, {
+			credentials: 'same-origin',
+			method: 'put',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		let responseJson = await response.json();
+		const ticket = responseJson.result;
+		response = await fetch(`/api/ticketsectors/${ticket.sectorId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const sector = responseJson.result;
+		response = await fetch(`/api/issues/${ticket.issueId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const issue = responseJson.result;
+		dispatch(updateTicketSuccess({ ...ticket, sector, issue }));
+	};
+};
+
+export function updateTicketSuccess(ticket) {
+	return { type: 'UPDATE_TICKET', ticket };
 };

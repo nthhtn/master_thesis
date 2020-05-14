@@ -10,7 +10,7 @@ module.exports = (app, db) => {
 	router.route('/')
 		.get(async (req, res) => {
 			try {
-				const result = await Task.queryByFields(req.query);
+				const result = await Task.lookupByFields(req.query);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -25,7 +25,26 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/search')
+		.get(async (req, res) => {
+			try {
+				const regex = new RegExp(req.query.q, 'gi');
+				const result = await Task.queryByFields({ name: { $regex: regex } });
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	router.route('/:id')
+		.get(async (req, res) => {
+			try {
+				const result = await Task.read(req.params.id);
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		})
 		.put(async (req, res) => {
 			try {
 				const result = await Task.update(req.params.id, req.body);

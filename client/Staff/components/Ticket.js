@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import { createTicket, listTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
@@ -7,6 +8,9 @@ import { listIssue } from '../actions/Issue';
 import { toDateString } from '../helpers';
 
 let self;
+
+const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 
 class TicketItem extends Component {
 
@@ -21,8 +25,6 @@ class TicketItem extends Component {
 
 	render() {
 		const { _id, title, message, owner, assignee, sector, issue, status, severity, createdAt } = this.props;
-		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
-		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td className="font-w600" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
@@ -48,7 +50,16 @@ export default class Ticket extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			userAllowNew: false,
+			userIsLoading: false,
+			userOptions: [],
+			userSelected: [],
+			customerAllowNew: false,
+			customerIsLoading: false,
+			customerOptions: [],
+			customerSelected: []
+		};
 		self = this;
 	}
 
@@ -59,7 +70,7 @@ export default class Ticket extends Component {
 		const severity = $('#create-ticket-severity').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
 		if (!title || !message || status == 0 || severity == 0) {
-			$('#create-ticket-error').text('Missing required field(s)(s)');
+			$('#create-ticket-error').text('Missing required field(s)');
 			return;
 		}
 		await self.props.dispatch(createTicket({ title, message, status, severity, sectorId }));
@@ -68,6 +79,30 @@ export default class Ticket extends Component {
 		$('#modal-create-ticket textarea').val('');
 		$('#modal-create-ticket select').val(0);
 		$('#modal-create-ticket').modal('hide');
+	}
+
+	async searchUser(query) {
+		self.setState({ userIsLoading: true });
+		const response = await fetch(`/api/users/search?q=${query}`, { credentials: 'same-origin' });
+		const responseJson = await response.json();
+		const result = responseJson.result;
+		self.setState({ userIsLoading: false, userOptions: result });
+	}
+
+	handleUserChange(selected) {
+		self.setState({ userSelected: selected });
+	}
+
+	async searchCustomer(query) {
+		self.setState({ customerIsLoading: true });
+		const response = await fetch(`/api/customers/search?q=${query}`, { credentials: 'same-origin' });
+		const responseJson = await response.json();
+		const result = responseJson.result;
+		self.setState({ customerIsLoading: false, customerOptions: result });
+	}
+
+	handleCustomerChange(selected) {
+		self.setState({ customerSelected: selected });
 	}
 
 	async componentDidMount() {
@@ -80,6 +115,18 @@ export default class Ticket extends Component {
 		const list = this.props.ticket.list;
 		const listSector = this.props.ticketSector.list;
 		const listIssue = this.props.issue.list;
+		const searchUserState = {
+			allowNew: this.state.userAllowNew,
+			isLoading: this.state.userIsLoading,
+			options: this.state.userOptions,
+			selected: this.state.userSelected
+		};
+		const searchCustomerState = {
+			allowNew: this.state.customerAllowNew,
+			isLoading: this.state.customerIsLoading,
+			options: this.state.customerOptions,
+			selected: this.state.customerSelected
+		};
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -162,15 +209,28 @@ export default class Ticket extends Component {
 														</select>
 													</div>
 													<div className="form-group col-sm-6">
+														<label htmlFor="create-ticket-owner">Ticket Owner*</label>
+														<AsyncTypeahead
+															{...searchCustomerState}
+															id="create-ticket-owner"
+															labelKey="fullName"
+															placeholder="Type to search a customer, unchangeable"
+															onSearch={this.searchCustomer}
+															onChange={this.handleCustomerChange}
+															ref='searchCustomerRef'
+														/>
+													</div>
+													<div className="form-group col-sm-6">
 														<label htmlFor="create-ticket-assignee">Assignee</label>
-														<select className="form-control" id="create-ticket-assignee">
-															<option value="0">Please select</option>
-															<option value="open">Open</option>
-															<option value="new">New</option>
-															<option value="inprogress">In Progress</option>
-															<option value="resolved">Resolved</option>
-															<option value="closed">Closed</option>
-														</select>
+														<AsyncTypeahead
+															{...searchUserState}
+															id="create-ticket-assignee"
+															labelKey="email"
+															placeholder="Type to search a user to assign"
+															onSearch={this.searchUser}
+															onChange={this.handleUserChange}
+															ref='searchUserRef'
+														/>
 													</div>
 													<div className="form-group col-sm-12">
 														<label id="create-ticket-error" style={{ color: 'red' }}></label>

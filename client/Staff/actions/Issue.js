@@ -43,7 +43,7 @@ export function updateIssue(id, data) {
 
 export function updateIssueSuccess(issue) {
 	return { type: 'UPDATE_ISSUE', issue };
-}
+};
 
 export function deleteIssue(id) {
 	return async (dispatch) => {

@@ -5,9 +5,12 @@ import { ObjectID } from 'mongodb';
 // 	name: 'string',
 // 	description: 'string',
 // 	status: 'string',
+// 	priority: 'string',
 // 	creatorId: 'string',
 // 	assigneeId: 'string',
-// 	workgroupId: 'string'
+// 	workgroupId: 'string',
+// 	parentId: 'string',
+// 	dueAt: 'number'
 // };
 
 export default class TaskModel {

@@ -12,6 +12,7 @@ import TicketDetails from './TicketDetails';
 import Ticket from './Ticket';
 import TicketSector from './TicketSector';
 import Task from './Task';
+import TaskDetails from './TaskDetails';
 import User from './User';
 import Issue from './Issue';
 
@@ -43,7 +44,9 @@ class Main extends Component {
 				<Route exact path='/ticketsectors'
 					render={() => <TicketSector {...this.props} />} />
 				<Route exact path='/tasks'
-					render={() => <Task {...this.props} />} />
+					render={(props) => <Task {...this.props} {...props} />} />
+				<Route exact path='/tasks/:id'
+					render={(props) => <TaskDetails {...this.props} {...props} />} />
 				<Route exact path='/users'
 					render={() => <User {...this.props} />} />
 				<Route exact path='/issues'

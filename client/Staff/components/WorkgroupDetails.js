@@ -1,13 +1,17 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { AsyncTypeahead } from 'react-bootstrap-typeahead';
+import { AsyncTypeahead, Typeahead } from 'react-bootstrap-typeahead';
 import swal from 'sweetalert2';
 
 import { createConversation } from '../actions/Conversation';
-import { getWorkgroupDetails, addWorkgroupMembers, removeWorkgroupMembers } from '../actions/Workgroup';
+import { createTask } from '../actions/Task';
+import { getWorkgroupDetails, addWorkgroupMembers, removeWorkgroupMembers, updateWorkgroup } from '../actions/Workgroup';
 import { toDateString } from '../helpers';
 
 let self;
+
+const statusClass = { todo: 'secondary', doing: 'primary', reviewing: 'warning', completed: 'success', canceled: 'danger' };
+const priorityClass = { normal: 'primary', important: 'warning', low: 'success', critical: 'danger' };
 
 class MemberItem extends Component {
 
@@ -51,15 +55,40 @@ class ConversationItem extends Component {
 		const { _id, title, content, createdAt, creator } = this.props;
 		return (
 			<tr>
-				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{creator.firstName + ' ' + creator.lastName}</td>
 				<td style={{ width: '20%' }}>
 					<Link className="font-w600" to={`/conversations/${_id}`}>{title}</Link>
 				</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{content}
 				</td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{creator.firstName + ' ' + creator.lastName}</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(createdAt)}</em>
+				</td>
+			</tr>
+		);
+	}
+
+}
+
+class TaskItem extends Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	render() {
+		const { _id, name, status, priority, dueAt } = this.props;
+		return (
+			<tr>
+				<td style={{ width: '20%' }}>
+					<Link className="font-w600" to={`/tasks/${_id}`}>{name}</Link>
+				</td>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + priorityClass[priority]}>{priority}</span></td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
+					<em>{toDateString(dueAt)}</em>
 				</td>
 			</tr>
 		);
@@ -73,18 +102,36 @@ export default class WorkgroupDetails extends Component {
 		super(props);
 		this.state = {
 			workgroupId: this.props.match.params.id,
-			allowNew: false,
-			isLoading: false,
-			multiple: true,
-			options: [],
-			selected: []
+			memberIsLoading: false,
+			memberOptions: [],
+			memberSelected: [],
+			assigneeSelected: [],
+			taskSelected: []
 		};
 		self = this;
 	}
 
 	async componentDidMount() {
 		const { workgroupId } = this.state;
+		$('#create-task-due').datetimepicker({ minDate: new Date(), disabledDates: [new Date()] });
 		await this.props.dispatch(getWorkgroupDetails(workgroupId));
+		const { current } = this.props.workgroup;
+		$('#update-workgroup-description').val(current.description);
+	}
+
+	async updateWorkgroup() {
+		const { workgroupId } = self.state;
+		const description = $('#update-workgroup-description').val();
+		if (!description) {
+			$('#update-workgroup-error').text('Missing required field(s)!');
+			return;
+		}
+		await self.props.dispatch(updateWorkgroup(workgroupId, { description }));
+		$('#update-workgroup-error').text('');
+		swal.fire({
+			html: 'Successful update!',
+			timer: 2000
+		});
 	}
 
 	async createConversation() {
@@ -104,22 +151,22 @@ export default class WorkgroupDetails extends Component {
 	}
 
 	async searchUser(query) {
-		self.setState({ isLoading: true });
+		self.setState({ memberIsLoading: true });
 		const response = await fetch(`/api/users/search?q=${query}`, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		const result = responseJson.result;
-		self.setState({ isLoading: false, options: result });
-	}
-
-	async addMember() {
-		if (self.state.selected.length === 0) { return; }
-		await self.props.dispatch(addWorkgroupMembers(self.state.workgroupId, self.state.selected));
-		$('#modal-add-member').modal('hide');
-		self.refs.searchUserRef.clear();
+		self.setState({ memberIsLoading: false, memberOptions: result });
 	}
 
 	handleAddChange(selected) {
-		self.setState({ selected });
+		self.setState({ memberSelected: selected });
+	}
+
+	async addMember() {
+		if (self.state.memberSelected.length === 0) { return; }
+		await self.props.dispatch(addWorkgroupMembers(self.state.workgroupId, self.state.memberSelected));
+		$('#modal-add-member').modal('hide');
+		self.refs.searchMemberRef.clear();
 	}
 
 	removeMember({ _id, email, firstName, lastName }) {
@@ -143,10 +190,56 @@ export default class WorkgroupDetails extends Component {
 		});
 	}
 
+	handleAssigneeChange(selected) {
+		self.setState({ assigneeSelected: selected });
+	}
+
+	async createTask() {
+		const name = $('#create-task-name').val();
+		const description = $('#create-task-description').val();
+		const status = $('#create-task-status').val();
+		const priority = $('#create-task-priority').val();
+		const dueAt = $('#create-task-due').val();
+		const { workgroupId } = self.state;
+		const assigneeId = self.state.assigneeSelected.length > 0 ? self.state.assigneeSelected[0]._id : null;
+		const assignee = assignee ? self.state.assigneeSelected[0] : null;
+		if (!name || !description || status == 0 || priority == 0 || !workgroupId || !dueAt) {
+			$('#create-task-error').text('Missing required field(s)');
+			return;
+		}
+		const data = {
+			name, description, status, priority, workgroupId, assigneeId,
+			dueAt: Date.parse(new Date(dueAt))
+		};
+		await self.props.dispatch(createTask(data, assignee));
+		$('#create-task-error').text('');
+		$('#modal-create-task input').val('');
+		$('#modal-create-task textarea').val('');
+		$('#modal-create-task select').val(0);
+		$('#modal-create-task').modal('hide');
+		self.refs.searchAssigneeRef.clear();
+	}
+
 	render() {
 		const { current } = this.props.workgroup;
 		const { name, members } = current;
 		const listConversation = this.props.conversation.list;
+		const listTask = this.props.task.list;
+		console.log(listTask);
+		const searchMemberState = {
+			isLoading: this.state.memberIsLoading,
+			multiple: true,
+			options: this.state.memberOptions,
+			selected: this.state.memberSelected
+		};
+		const searchAssigneeState = {
+			options: members,
+			selected: this.state.assigneeSelected
+		};
+		const searchTaskState = {
+			options: [],
+			selected: []
+		};
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -187,14 +280,14 @@ export default class WorkgroupDetails extends Component {
 																<div className="form-group col-sm-12">
 																	<label htmlFor="add-member">Member email*</label>
 																	<AsyncTypeahead
-																		{...this.state}
+																		{...searchMemberState}
 																		id="add-member"
 																		labelKey="email"
 																		placeholder="Type to search"
 																		multiple
 																		onSearch={this.searchUser}
 																		onChange={this.handleAddChange}
-																		ref='searchUserRef'
+																		ref='searchMemberRef'
 																	/>
 																</div>
 															</div>
@@ -215,6 +308,28 @@ export default class WorkgroupDetails extends Component {
 							</div>
 						</div>
 						<div className="col-md-7 col-xl-9">
+							<div className="block">
+								<div className="block-header block-header-default">
+									<h3 className="block-title">Workgroup Description</h3>
+									<div className="block-options">
+										<button type="button" className="btn btn-sm btn-primary" onClick={this.updateWorkgroup}>
+											<i className="fa fa-check"></i> Save
+										</button>
+									</div>
+								</div>
+								<div className="block-content font-size-sm">
+									<div className="row">
+										<div className="form-group col-sm-12">
+											<textarea className="form-control" id="update-workgroup-description" />
+										</div>
+										<div className="form-group col-sm-12">
+											<label id="update-workgroup-error" style={{ color: 'red' }}></label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="col-md-6 col-xl-6">
 							<div className="block">
 								<div className="block-header block-header-default">
 									<h3 className="block-title">Conversations</h3>
@@ -265,6 +380,99 @@ export default class WorkgroupDetails extends Component {
 										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
 											<tbody>
 												{listConversation.map((item) => <ConversationItem key={item._id} {...item} />)}
+											</tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="col-md-6 col-xl-6">
+							<div className="block">
+								<div className="block-header block-header-default">
+									<h3 className="block-title">Tasks</h3>
+									<div className="block-options">
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-task">
+											<i className="fa fa-plus"></i> New
+										</button>
+									</div>
+								</div>
+								<div className="block-content">
+									<div className="modal fade" id="modal-create-task" tabIndex="-1" role="dialog" aria-labelledby="modal-create-task" aria-modal="true" style={{ paddingRight: '15px' }}>
+										<div className="modal-dialog modal-lg" role="document">
+											<div className="modal-content">
+												<div className="block block-themed block-transparent mb-0">
+													<div className="block-header bg-primary-dark">
+														<h3 className="block-title">New Task</h3>
+														<div className="block-options">
+															<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
+																<i className="fa fa-fw fa-times"></i>
+															</button>
+														</div>
+													</div>
+													<div className="block-content font-size-sm">
+														<div className="row">
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-name">Name*</label>
+																<input type="text" className="form-control" id="create-task-name" />
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-due">Due date*</label>
+																<input type="text" className="form-control" id="create-task-due" />
+															</div>
+															<div className="form-group col-sm-12">
+																<label htmlFor="create-task-description">Description*</label>
+																<textarea rows="4" className="form-control" id="create-task-description" />
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-status">Status*</label>
+																<select className="form-control" id="create-task-status">
+																	<option value="0">Please select</option>
+																	<option value="todo">Todo</option>
+																	<option value="doing">Doing</option>
+																	<option value="reviewing">Reviewing</option>
+																	<option value="completed">Completed</option>
+																	<option value="canceled">Canceled</option>
+																</select>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-priority">Priority*</label>
+																<select className="form-control" id="create-task-priority">
+																	<option value="0">Please select</option>
+																	<option value="low">Low</option>
+																	<option value="normal">Normal</option>
+																	<option value="important">Important</option>
+																	<option value="critical">Critical</option>
+																</select>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-assignee">Assignee</label>
+																<Typeahead
+																	{...searchAssigneeState}
+																	id="create-task-assignee"
+																	labelKey="email"
+																	placeholder="Type to search a user to assign"
+																	ref='searchAssigneeRef'
+																	onChange={this.handleAssigneeChange}
+																/>
+															</div>
+															<div className="form-group col-sm-12">
+																<label id="create-task-error" style={{ color: 'red' }}></label>
+															</div>
+														</div>
+													</div>
+													<div className="block-content block-content-full text-right border-top">
+														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createTask}><i className="fa fa-check"></i> Ok</button>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div className="d-flex justify-content-between push"></div>
+									<div className="pull-x">
+										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
+											<tbody>
+												{listTask.map((item) => <TaskItem key={item._id} {...item} />)}
 											</tbody>
 										</table>
 									</div>

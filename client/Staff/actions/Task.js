@@ -1,4 +1,4 @@
-export function createTask(task) {
+export function createTask(task, assignee) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/tasks`, {
 			credentials: 'same-origin',
@@ -7,7 +7,8 @@ export function createTask(task) {
 			body: JSON.stringify(task)
 		});
 		const responseJson = await response.json();
-		dispatch(createTaskSuccess(responseJson.result));
+		const result = { ...responseJson.result, assignee };
+		dispatch(createTaskSuccess(result));
 	};
 };
 
@@ -15,9 +16,11 @@ export function createTaskSuccess(task) {
 	return { type: 'CREATE_TASK', task };
 };
 
-export function listTask() {
+export function listTask(query = {}) {
 	return async (dispatch) => {
-		const response = await fetch(`/api/tasks`, { credentials: 'same-origin' });
+		const queryString = Object.keys(query).map((key) => (key + '=' + query[key])).join('&');
+		const url = '/api/tasks' + (Object.keys(query).length > 0 ? '?' + queryString : '');
+		const response = await fetch(url, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		dispatch(listTaskSuccess(responseJson.result));
 	}
@@ -25,4 +28,44 @@ export function listTask() {
 
 export function listTaskSuccess(list) {
 	return { type: 'LIST_TASK', list };
+};
+
+export function getTaskDetails(id) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/tasks/${id}`, { credentials: 'same-origin' });
+		let responseJson = await response.json();
+		const task = responseJson.result;
+		response = await fetch(`/api/workgroups/${task.workgroupId}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const workgroup = responseJson.result;
+		let assignee = null;
+		if (task.assigneeId) {
+			response = await fetch(`/api/users/${task.assigneeId}`, { credentials: 'same-origin' });
+			responseJson = await response.json();
+			assignee = responseJson.result;
+		}
+		dispatch(getTaskDetailsSuccess({ ...task, workgroup, assignee }));
+	};
+};
+
+export function getTaskDetailsSuccess(task) {
+	return { type: 'GET_TASK_DETAILS', task };
+};
+
+export function updateTask(id, data) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/tasks/${id}`, {
+			credentials: 'same-origin',
+			method: 'put',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		let responseJson = await response.json();
+		const task = responseJson.result;
+		dispatch(updateTaskSuccess({ ...task }));
+	};
+};
+
+export function updateTaskSuccess(task) {
+	return { type: 'UPDATE_TASK', task };
 };

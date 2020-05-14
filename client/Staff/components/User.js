@@ -41,7 +41,7 @@ export default class User extends Component {
 		const lastName = $('#create-user-lastname').val();
 		const userType = $('#create-user-type').val();
 		if (!firstName || !lastName || userType == 0) {
-			$('#create-user-error').text('Missing required field(s)(s)');
+			$('#create-user-error').text('Missing required field(s)');
 			return;
 		}
 		// await self.props.dispatch(createUser({ firstName, lastName, userType, sectorId }));

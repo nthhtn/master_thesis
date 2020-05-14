@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
-let self;
-
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
 import { createTicket, listTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
 import { listIssue } from '../actions/Issue';
 import { toDateString } from '../helpers';
+
+let self;
+
+const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 
 class TicketItem extends Component {
 
@@ -23,26 +26,24 @@ class TicketItem extends Component {
 
 	render() {
 		const { _id, title, message, createdAt, sector, issue, status, severity } = this.props;
-		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
-		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td style={{ width: '15%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
 				</td>
-				<td style={{ width: '25%', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
 				</td>
-				<td><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
-				<td><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
-				<td className="d-none d-sm-table-cell font-w600" style={{ color: sector ? sector.color : 'black' }}>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ color: sector ? sector.color : 'black', width: '8%' }}>
 					{sector ? sector.name : ''}
 				</td>
-				<td className="d-none d-sm-table-cell font-w600" style={{ color: issue ? issue.color : 'black' }}>
+				<td className="d-none d-sm-table-cell font-w600" style={{ color: issue ? issue.color : 'black', width: '8%' }}>
 					{issue ? issue.name : ''}
 				</td>
-				<td className="d-none d-sm-table-cell font-w600">Assignee</td>
-				<td className="d-none d-xl-table-cell text-muted" style={{ width: '15%' }}>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '8%' }}>Assignee</td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '10%' }}>
 					<em>{toDateString(createdAt)}</em>
 				</td>
 			</tr>
@@ -82,7 +83,7 @@ export default class CustomerDetails extends Component {
 		const address = $('#update-customer-address').val();
 		const note = $('#update-customer-note').val();
 		if (!fullName) {
-			$('#update-customer-error').text('Customer name must not be empty!');
+			$('#update-customer-error').text('Missing required field(s)!');
 			return;
 		}
 		await self.props.dispatch(updateCustomer(customerId, { fullName, email, phone, address, note }));
@@ -98,7 +99,7 @@ export default class CustomerDetails extends Component {
 		const fullName = $('#update-customer-name').val();
 		swal.fire({
 			title: 'Are you sure?',
-			html: "All customer-related data will be lost!<br/>You won't be able to revert this!",
+			html: "All customer-related info and tickets will be lost!<br/>You <strong>WON'T</strong> be able to revert this!",
 			icon: 'warning',
 			showCancelButton: true,
 			confirmButtonColor: '#3085d6',
@@ -124,7 +125,7 @@ export default class CustomerDetails extends Component {
 		const severity = $('#create-ticket-severity').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
 		if (!title || !message || status == 0) {
-			$('#create-ticket-error').text('Missing required field(s)(s)');
+			$('#create-ticket-error').text('Missing required field(s)');
 			return;
 		}
 		const data = { title, message, ownerId: self.state.customerId, status, severity, sectorId };
@@ -155,6 +156,11 @@ export default class CustomerDetails extends Component {
 								<div className="block">
 									<div className="block-header block-header-default">
 										<h3 className="block-title">Customer Details</h3>
+										<div className="block-options">
+											<button type="button" className="btn btn-danger" onClick={this.deleteCustomer}>
+												<i className="fa fa-trash-alt"></i>
+											</button>
+										</div>
 									</div>
 									<div className="block-content font-size-sm">
 										<div className="row">
@@ -182,8 +188,9 @@ export default class CustomerDetails extends Component {
 												<label id="update-customer-error" style={{ color: 'red' }}></label>
 											</div>
 											<div className="form-group col-sm-12 text-right">
-												<button type="button" className="btn btn-sm btn-danger" onClick={this.deleteCustomer}>Delete</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateCustomer}>Save</button>
+												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateCustomer}>
+													<i className="fa fa-check"></i> Save
+												</button>
 											</div>
 										</div>
 									</div>

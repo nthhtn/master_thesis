@@ -1,4 +1,5 @@
 import { listConversation } from './Conversation';
+import { listTask } from './Task';
 
 export function createWorkgroup(workgroup) {
 	return async (dispatch) => {
@@ -36,6 +37,7 @@ export function getWorkgroupDetails(id) {
 		const workgroup = responseJson.result;
 		dispatch(getWorkgroupDetailsSuccess(workgroup));
 		dispatch(listConversation({ workgroupId: id }));
+		dispatch(listTask({ workgroupId: id }));
 	};
 };
 
@@ -77,4 +79,21 @@ export function removeWorkgroupMembers(id, list) {
 
 export function removeWorkgroupMembersSuccess(list) {
 	return { type: 'REMOVE_WORKGROUP_MEMBERS', list };
+};
+
+export function updateWorkgroup(id, data) {
+	return async (dispatch) => {
+		let response = await fetch(`/api/workgroups/${id}`, {
+			credentials: 'same-origin',
+			method: 'put',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(data)
+		});
+		let responseJson = await response.json();
+		dispatch(updateWorkgroupSuccess(responseJson.result));
+	};
+};
+
+export function updateWorkgroupSuccess(workgroup) {
+	return { type: 'UPDATE_WORKGROUP', workgroup };
 };

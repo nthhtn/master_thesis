@@ -8,6 +8,9 @@ import { toDateString } from '../helpers';
 
 let self;
 
+const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
+
 class CommentItem extends Component {
 
 	constructor(props) {
@@ -33,7 +36,7 @@ class CommentItem extends Component {
 
 }
 
-export default class Ticket extends Component {
+export default class TicketDetails extends Component {
 
 	constructor(props) {
 		super(props);
@@ -56,6 +59,7 @@ export default class Ticket extends Component {
 		$('#update-ticket-status').val(ticket.status);
 		$('#update-ticket-severity').val(ticket.severity);
 		$('#update-ticket-sector').val(ticket.sectorId || 0);
+		$('#update-ticket-issue').val(ticket.issueId || 0);
 	}
 
 	async addComment() {
@@ -85,8 +89,6 @@ export default class Ticket extends Component {
 		const { firstName, lastName } = this.props.user.me;
 		const listSector = this.props.ticketSector.list;
 		const listIssue = this.props.issue.list;
-		const statusClass = { new: 'default', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
-		const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">

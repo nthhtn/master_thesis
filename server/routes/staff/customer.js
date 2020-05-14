@@ -25,6 +25,17 @@ module.exports = (app, db) => {
 			}
 		});
 
+	router.route('/search')
+		.get(async (req, res) => {
+			try {
+				const regex = new RegExp(req.query.q, 'gi');
+				const result = await Customer.queryByFields({ $or: [{ email: { $regex: regex } }, { fullName: { $regex: regex } }] });
+				return res.json({ success: true, result });
+			} catch (error) {
+				return res.status(400).json({ success: false, error: error.message });
+			}
+		});
+
 	router.route('/:id')
 		.get(async (req, res) => {
 			try {

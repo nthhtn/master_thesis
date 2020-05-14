@@ -88,9 +88,19 @@ export default class TaskModel {
 			],
 			as: 'assignee'
 		};
+		const lookupParent = {
+			from: 'task',
+			let: { parentId: '$parentId' },
+			pipeline: [
+				{ $match: { $expr: { $eq: ['$_id', '$$parentId'] } } },
+				{ $project: { name: 1 } }
+			],
+			as: 'parent'
+		};
 		const aggregate = [{ $match: fields },
 		{ $lookup: lookupWorkgroup }, { $unwind: { path: '$workgroup', preserveNullAndEmptyArrays: true } },
-		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } }];
+		{ $lookup: lookupAssignee }, { $unwind: { path: '$assignee', preserveNullAndEmptyArrays: true } },
+		{ $lookup: lookupParent }, { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } }];
 		try {
 			const result = await this._db.collection(this._table).aggregate(aggregate).toArray();
 			return await result;

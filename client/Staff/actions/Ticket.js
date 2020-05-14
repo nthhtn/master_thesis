@@ -1,4 +1,4 @@
-export function createTicket(ticket) {
+export function createTicket(ticket, owner) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/tickets`, {
 			credentials: 'same-origin',
@@ -7,7 +7,8 @@ export function createTicket(ticket) {
 			body: JSON.stringify(ticket)
 		});
 		const responseJson = await response.json();
-		dispatch(createTicketSuccess(responseJson.result));
+		const result = { ...responseJson.result, owner };
+		dispatch(createTicketSuccess(result));
 	};
 };
 

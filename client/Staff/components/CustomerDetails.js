@@ -140,12 +140,13 @@ export default class CustomerDetails extends Component {
 		const list = this.props.ticket.list;
 		const listSector = this.props.ticketSector.list;
 		const listIssue = this.props.issue.list;
+		const { current } = this.props.customer;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
 					<div className="content content-full">
 						<div className="d-flex flex-column flex-sm-row justify-content-sm-between align-items-sm-center">
-							<h1 className="flex-sm-fill h3 my-2"></h1>
+							<h1 className="flex-sm-fill h3 my-2">{current.fullName}</h1>
 						</div>
 					</div>
 				</div>
@@ -155,7 +156,7 @@ export default class CustomerDetails extends Component {
 							<div id="one-inbox-side-nav" className="d-none d-md-block push">
 								<div className="block">
 									<div className="block-header block-header-default">
-										<h3 className="block-title">Customer Details</h3>
+										<h3 className="block-title">Customer Info</h3>
 										<div className="block-options">
 											<button type="button" className="btn btn-danger" onClick={this.deleteCustomer}>
 												<i className="fa fa-trash-alt"></i>

@@ -28,8 +28,12 @@ module.exports = (app, db) => {
 	router.route('/search')
 		.get(async (req, res) => {
 			try {
-				const regex = new RegExp(req.query.q, 'gi');
-				const result = await Task.queryByFields({ name: { $regex: regex } });
+				const { q, workgroupId } = req.query;
+				let filter_options = { name: { $regex: new RegExp(q, 'gi') } };
+				if (workgroupId) {
+					filter_options.workgroupId = workgroupId;
+				}
+				const result = await Task.queryByFields(filter_options);
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

@@ -31,7 +31,7 @@ export default class TaskDetails extends Component {
 		$('#update-task-due').datetimepicker({ minDate: new Date(), disabledDates: [new Date()] });
 		await this.props.dispatch(getTaskDetails(taskId));
 		const { current } = this.props.task;
-		const { name, description, status, priority, workgroup, assignee, dueAt } = current;
+		const { name, description, status, priority, assignee, dueAt, parent } = current;
 		$('#update-task-name').val(name);
 		$('#update-task-description').val(description);
 		$('#update-task-status').val(status);
@@ -40,11 +40,15 @@ export default class TaskDetails extends Component {
 		if (assignee) {
 			this.setState({ userSelected: [assignee] });
 		}
+		if (parent) {
+			this.setState({ taskSelected: [parent] });
+		}
 	}
 
 	async searchUser(query) {
 		self.setState({ userIsLoading: true });
-		const response = await fetch(`/api/users/search?q=${query}`, { credentials: 'same-origin' });
+		const { current } = self.props.task;
+		const response = await fetch(`/api/users/search?q=${query}&workgroupId=${current.workgroupId}`, { credentials: 'same-origin' });
 		const responseJson = await response.json();
 		const result = responseJson.result;
 		self.setState({ userIsLoading: false, userOptions: result });
@@ -52,18 +56,6 @@ export default class TaskDetails extends Component {
 
 	handleUserChange(selected) {
 		self.setState({ userSelected: selected });
-	}
-
-	async searchTask(query) {
-		self.setState({ taskIsLoading: true });
-		const response = await fetch(`/api/tasks/search?q=${query}`, { credentials: 'same-origin' });
-		const responseJson = await response.json();
-		const result = responseJson.result;
-		self.setState({ taskIsLoading: false, taskOptions: result });
-	}
-
-	handleTaskChange(selected) {
-		self.setState({ taskSelected: selected });
 	}
 
 	async updateTask() {
@@ -78,6 +70,29 @@ export default class TaskDetails extends Component {
 			return;
 		}
 		await self.props.dispatch(updateTask(taskId, { name, description, status, priority, dueAt: Date.parse(new Date(dueAt)) }));
+		swal.fire({
+			html: 'Successful update!',
+			timer: 2000
+		});
+	}
+
+	async searchTask(query) {
+		self.setState({ taskIsLoading: true });
+		const { current } = self.props.task;
+		const response = await fetch(`/api/tasks/search?q=${query}&workgroupId=${current.workgroupId}`, { credentials: 'same-origin' });
+		const responseJson = await response.json();
+		const result = responseJson.result;
+		self.setState({ taskIsLoading: false, taskOptions: result });
+	}
+
+	handleTaskChange(selected) {
+		self.setState({ taskSelected: selected });
+	}
+
+	async updateParentTask() {
+		const { taskId } = self.state;
+		const parentId = self.state.taskSelected.length > 0 ? self.state.taskSelected[0]._id : null;
+		await self.props.dispatch(updateTask(taskId, { parentId }));
 		swal.fire({
 			html: 'Successful update!',
 			timer: 2000
@@ -163,7 +178,7 @@ export default class TaskDetails extends Component {
 										<div className="form-group col-sm-12 text-right">
 											<button type="button" className="btn btn-sm btn-primary" onClick={this.updateTask}>
 												<i className="fa fa-check"></i> Save
-									</button>
+											</button>
 										</div>
 									</div>
 								</div>
@@ -172,23 +187,32 @@ export default class TaskDetails extends Component {
 						<div className="col-sm-6">
 							<div className="block">
 								<div className="block-content">
-									<div className="form-group col-sm-12">
-										<label>Workgroup: <Link to={`/workgroups/${workgroup._id}`}>{workgroup.name}</Link></label>
-									</div>
-									<div className="form-group col-sm-9">
-										<label htmlFor="update-task-parent">Parent task</label>
-										<AsyncTypeahead
-											{...searchTaskState}
-											id="update-task-parent"
-											labelKey="name"
-											placeholder="Type to search a task in this workgroup"
-											onSearch={this.searchTask}
-											onChange={this.handleTaskChange}
-											ref='searchTaskRef'
-										/>
-									</div>
-									<div className="form-group col-sm-12">
-										<label>Workgroup: <Link to={`/workgroups/${workgroup._id}`}>{workgroup.name}</Link></label>
+									<div className="row">
+										<div className="form-group col-sm-12">
+											<label>Workgroup: <Link to={`/workgroups/${workgroup._id}`}>{workgroup.name}</Link></label>
+										</div>
+										<div className="form-group col-sm-12">
+											<label htmlFor="update-task-parent">Parent task</label>
+											<div className="input-group">
+												<AsyncTypeahead
+													{...searchTaskState}
+													id="update-task-parent"
+													labelKey="name"
+													placeholder="Type to search a task in this workgroup"
+													onSearch={this.searchTask}
+													onChange={this.handleTaskChange}
+													ref='searchTaskRef'
+												/>
+												<div className="input-group-append">
+													<button type="button" className="btn btn-primary" onClick={this.updateParentTask}>
+														<i className="fa fa-check"></i>
+													</button>
+												</div>
+											</div>
+										</div>
+										<div className="form-group col-sm-12">
+											<label>Children tasks:</label> 0
+										</div>
 									</div>
 								</div>
 							</div>

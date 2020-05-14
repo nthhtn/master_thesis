@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 
 import { createTicket, listTicket } from '../actions/Ticket';
@@ -28,7 +28,7 @@ class TicketItem extends Component {
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td className="font-w600" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
+					{title}
 				</td>
 				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
@@ -68,12 +68,15 @@ export default class Ticket extends Component {
 		const message = $('#create-ticket-message').val();
 		const status = $('#create-ticket-status').val();
 		const severity = $('#create-ticket-severity').val();
-		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
-		if (!title || !message || status == 0 || severity == 0) {
+		const sectorId = $('#create-ticket-sector').val() == 0 ? null : $('#create-ticket-sector').val();
+		const issueId = $('#create-ticket-issue').val() == 0 ? null : $('#create-ticket-issue').val();
+		const owner = self.state.customerSelected[0];
+		const ownerId = owner ? owner._id : null;
+		if (!title || !message || status == 0 || severity == 0 || !ownerId) {
 			$('#create-ticket-error').text('Missing required field(s)');
 			return;
 		}
-		await self.props.dispatch(createTicket({ title, message, status, severity, sectorId }));
+		await self.props.dispatch(createTicket({ title, message, status, severity, sectorId, issueId, ownerId }, owner));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
 		$('#modal-create-ticket textarea').val('');

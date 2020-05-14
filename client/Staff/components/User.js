@@ -125,11 +125,11 @@ export default class User extends Component {
 								<table className="table table-bordered table-striped table-vcenter">
 									<thead>
 										<tr>
-											<th>Full name</th>
-											<th>Email</th>
-											<th>Phone</th>
-											<th>Address</th>
-											<th>User Role</th>
+											<th style={{ width: '15%' }}>Full name</th>
+											<th style={{ width: '15%' }}>Email</th>
+											<th style={{ width: '15%' }}>Phone</th>
+											<th style={{ width: '30%' }}>Address</th>
+											<th style={{ width: '15%' }}>User Role</th>
 										</tr>
 									</thead>
 									<tbody>

@@ -79,7 +79,7 @@ class TaskItem extends Component {
 	}
 
 	render() {
-		const { _id, name, status, priority, dueAt } = this.props;
+		const { _id, name, status, priority, assignee, dueAt } = this.props;
 		return (
 			<tr>
 				<td style={{ width: '20%' }}>
@@ -87,6 +87,9 @@ class TaskItem extends Component {
 				</td>
 				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td style={{ width: '8%' }}><span className={'badge badge-' + priorityClass[priority]}>{priority}</span></td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>
+					{assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unassigned'}
+				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(dueAt)}</em>
 				</td>
@@ -106,7 +109,7 @@ export default class WorkgroupDetails extends Component {
 			memberOptions: [],
 			memberSelected: [],
 			assigneeSelected: [],
-			taskSelected: []
+			parentSelected: []
 		};
 		self = this;
 	}
@@ -116,17 +119,19 @@ export default class WorkgroupDetails extends Component {
 		$('#create-task-due').datetimepicker({ minDate: new Date(), disabledDates: [new Date()] });
 		await this.props.dispatch(getWorkgroupDetails(workgroupId));
 		const { current } = this.props.workgroup;
+		$('#update-workgroup-name').val(current.name);
 		$('#update-workgroup-description').val(current.description);
 	}
 
 	async updateWorkgroup() {
 		const { workgroupId } = self.state;
+		const name = $('#update-workgroup-name').val();
 		const description = $('#update-workgroup-description').val();
-		if (!description) {
+		if (!name || !description) {
 			$('#update-workgroup-error').text('Missing required field(s)!');
 			return;
 		}
-		await self.props.dispatch(updateWorkgroup(workgroupId, { description }));
+		await self.props.dispatch(updateWorkgroup(workgroupId, { name, description }));
 		$('#update-workgroup-error').text('');
 		swal.fire({
 			html: 'Successful update!',
@@ -194,6 +199,10 @@ export default class WorkgroupDetails extends Component {
 		self.setState({ assigneeSelected: selected });
 	}
 
+	handleParentChange(selected) {
+		self.setState({ parentSelected: selected });
+	}
+
 	async createTask() {
 		const name = $('#create-task-name').val();
 		const description = $('#create-task-description').val();
@@ -223,9 +232,10 @@ export default class WorkgroupDetails extends Component {
 	render() {
 		const { current } = this.props.workgroup;
 		const { name, members } = current;
+		// console.log(current);
 		const listConversation = this.props.conversation.list;
 		const listTask = this.props.task.list;
-		console.log(listTask);
+		// console.log(listTask);
 		const searchMemberState = {
 			isLoading: this.state.memberIsLoading,
 			multiple: true,
@@ -236,9 +246,9 @@ export default class WorkgroupDetails extends Component {
 			options: members,
 			selected: this.state.assigneeSelected
 		};
-		const searchTaskState = {
-			options: [],
-			selected: []
+		const searchParentState = {
+			options: listTask,
+			selected: this.state.parentSelected
 		};
 		return (
 			<main id="main-container">
@@ -258,7 +268,7 @@ export default class WorkgroupDetails extends Component {
 										<h3 className="block-title">Members</h3>
 										<div className="block-options">
 											<button type="button" className="btn btn-sm btn-success mr-2" data-toggle="modal" data-target="#modal-add-member">
-												<i className="fa fa-plus"></i> New
+												<i className="fa fa-plus"></i>
 											</button>
 										</div>
 									</div>
@@ -310,7 +320,7 @@ export default class WorkgroupDetails extends Component {
 						<div className="col-md-7 col-xl-9">
 							<div className="block">
 								<div className="block-header block-header-default">
-									<h3 className="block-title">Workgroup Description</h3>
+									<h3 className="block-title">Workgroup Info</h3>
 									<div className="block-options">
 										<button type="button" className="btn btn-sm btn-primary" onClick={this.updateWorkgroup}>
 											<i className="fa fa-check"></i> Save
@@ -320,7 +330,12 @@ export default class WorkgroupDetails extends Component {
 								<div className="block-content font-size-sm">
 									<div className="row">
 										<div className="form-group col-sm-12">
-											<textarea className="form-control" id="update-workgroup-description" />
+											<label htmlFor="update-workgroup-name">Name*</label>
+											<input type="text" className="form-control" id="update-workgroup-name" />
+										</div>
+										<div className="form-group col-sm-12">
+											<label htmlFor="update-customer-name">Description*</label>
+											<textarea rows="4" className="form-control" id="update-workgroup-description" />
 										</div>
 										<div className="form-group col-sm-12">
 											<label id="update-workgroup-error" style={{ color: 'red' }}></label>
@@ -335,7 +350,7 @@ export default class WorkgroupDetails extends Component {
 									<h3 className="block-title">Conversations</h3>
 									<div className="block-options">
 										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation">
-											<i className="fa fa-plus"></i> New
+											<i className="fa fa-plus"></i>
 										</button>
 									</div>
 								</div>
@@ -392,7 +407,7 @@ export default class WorkgroupDetails extends Component {
 									<h3 className="block-title">Tasks</h3>
 									<div className="block-options">
 										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-task">
-											<i className="fa fa-plus"></i> New
+											<i className="fa fa-plus"></i>
 										</button>
 									</div>
 								</div>
@@ -453,6 +468,17 @@ export default class WorkgroupDetails extends Component {
 																	placeholder="Type to search a user to assign"
 																	ref='searchAssigneeRef'
 																	onChange={this.handleAssigneeChange}
+																/>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-parent">Parent Task</label>
+																<Typeahead
+																	{...searchParentState}
+																	id="create-task-parent"
+																	labelKey="name"
+																	placeholder="Type to search a task as parent to this task"
+																	ref='searchParentRef'
+																	onChange={this.handleParentChange}
 																/>
 															</div>
 															<div className="form-group col-sm-12">

@@ -44,7 +44,13 @@ export function getTaskDetails(id) {
 			responseJson = await response.json();
 			assignee = responseJson.result;
 		}
-		dispatch(getTaskDetailsSuccess({ ...task, workgroup, assignee }));
+		let parent = null;
+		if (task.parentId) {
+			response = await fetch(`/api/tasks/${task.parentId}`, { credentials: 'same-origin' });
+			responseJson = await response.json();
+			parent = responseJson.result;
+		}
+		dispatch(getTaskDetailsSuccess({ ...task, workgroup, assignee, parent }));
 	};
 };
 

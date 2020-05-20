@@ -12,7 +12,7 @@ module.exports = async (db) => {
 			lastName: 'User',
 			phone: '',
 			address: '',
-			userType: 'manager'
+			role: 'manager'
 		};
 		test_user.password = hashPassword('123456', test_user.salt);
 		return User.create(test_user);

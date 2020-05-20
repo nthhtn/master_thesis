@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { getConversationDetails, getConversationDetailsSuccess, listConversationComment, addConversationComment }
+import { getConversationDetails, listConversationComment, addConversationComment }
 	from '../actions/Conversation';
 import { toDateString } from '../helpers';
 
@@ -46,9 +46,7 @@ export default class Conversation extends Component {
 
 	componentDidMount() {
 		const { conversationId } = this.state;
-		let conversation = this.props.conversation.list.find((item) => item._id === conversationId);
-		conversation ? this.props.dispatch(getConversationDetailsSuccess(conversation))
-			: this.props.dispatch(getConversationDetails(conversationId));
+		this.props.dispatch(getConversationDetails(conversationId));
 		this.props.dispatch(listConversationComment(conversationId));
 	}
 

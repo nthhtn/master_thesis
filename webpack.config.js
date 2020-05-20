@@ -5,8 +5,9 @@ module.exports = {
 	cache: true,
 	mode: 'development',
 	entry: {
+		'anonymous': ['./client/Anonymous/index', 'webpack-hot-middleware/client'],
 		'guest': ['./client/Guest/index', 'webpack-hot-middleware/client'],
-		'staff': ['./client/Staff/index', 'webpack-hot-middleware/client']
+		'user': ['./client/User/index', 'webpack-hot-middleware/client']
 	},
 	output: {
 		filename: '[name].bundle.js',

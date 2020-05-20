@@ -11,12 +11,14 @@ export default class Home extends Component {
 	handleSubmit() {
 		const email = $('#login-username').val();
 		const password = $('#login-password').val();
+		const role = $('input[name="login-role"]:checked').val();
 		if (!email || !password) {
 			$('#login-error').html('Invalid username/password');
+			return;
 		}
-		axios.post('/login', { email, password })
+		axios.post('/login', { email, password, role })
 			.then((response) => {
-				window.location.href = '/dashboard';
+				window.location.href = role === 'guest' ? '/profile' : '/dashboard';
 			})
 			.catch((error) => {
 				$('#login-error').html(error.response.data.error);
@@ -52,6 +54,16 @@ export default class Home extends Component {
 																<input type="password"
 																	className="form-control form-control-alt form-control-lg"
 																	id="login-password" placeholder="Password" />
+															</div>
+														</div>
+														<div className="form-group">
+															<div className="form-check form-check-inline">
+																<input className="form-check-input" type="radio" id="login-user" name="login-role" value="option1" defaultChecked />
+																<label className="form-check-label" htmlFor="login-user">Staff</label>
+															</div>
+															<div className="form-check form-check-inline">
+																<input className="form-check-input" type="radio" id="login-guest" name="login-role" value="option2" />
+																<label className="form-check-label" htmlFor="login-guest">Guest</label>
 															</div>
 														</div>
 														<p id="login-error" style={{ color: 'red' }}></p>

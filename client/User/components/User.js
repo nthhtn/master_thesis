@@ -13,15 +13,15 @@ class UserItem extends Component {
 	}
 
 	render() {
-		const { _id, firstName, lastName, email, phone, address, userType } = this.props;
-		const typeClass = { staff: 'primary', manager: 'danger' };
+		const { _id, firstName, lastName, email, phone, address, role } = this.props;
+		const typeClass = { staff: 'primary', manager: 'danger', guest: 'warning' };
 		return (
 			<tr style={{ cursor: 'pointer' }}>
 				<td className="font-w600" style={{ color: '#5c80d1' }}>{firstName + ' ' + lastName}</td>
 				<td><em className="text-muted">{email}</em></td>
 				<td>{phone}</td>
 				<td>{address}</td>
-				<td><span className={'badge badge-' + typeClass[userType]}>{userType}</span></td>
+				<td><span className={'badge badge-' + typeClass[role]}>{role}</span></td>
 			</tr>
 		);
 	}
@@ -39,12 +39,12 @@ export default class User extends Component {
 	async createUser() {
 		const firstName = $('#create-user-firstname').val();
 		const lastName = $('#create-user-lastname').val();
-		const userType = $('#create-user-type').val();
-		if (!firstName || !lastName || userType == 0) {
+		const role = $('#create-user-type').val();
+		if (!firstName || !lastName || role == 0) {
 			$('#create-user-error').text('Missing required field(s)');
 			return;
 		}
-		// await self.props.dispatch(createUser({ firstName, lastName, userType, sectorId }));
+		// await self.props.dispatch(createUser({ firstName, lastName, role, sectorId }));
 		$('#create-user-error').text('');
 		$('#modal-create-user input').val('');
 		$('#modal-create-user textarea').val('');

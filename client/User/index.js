@@ -132,6 +132,5 @@ store.dispatch(getMyProfile()).then(() => {
 			</BrowserRouter>
 		</Provider>
 	);
-
 	render(rootComponent, document.getElementById('root'));
 });

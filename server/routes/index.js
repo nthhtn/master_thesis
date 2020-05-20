@@ -7,16 +7,15 @@ module.exports = (app, db) => {
 
 	app.use('/api', isLoggedIn);
 
-	require('./staff/workgroup')(app, db);
-	require('./staff/conversation')(app, db);
-	require('./staff/task')(app, db);
-	require('./staff/customer')(app, db);
-	require('./staff/ticket')(app, db);
-	require('./staff/user')(app, db);
-	require('./staff/index')(app, db);
-
-	require('./manager/ticketSector')(app, db);
-	require('./manager/issue')(app, db);
+	require('./user/workgroup')(app, db);
+	require('./user/conversation')(app, db);
+	require('./user/task')(app, db);
+	require('./user/customer')(app, db);
+	require('./user/ticket')(app, db);
+	require('./user/user')(app, db);
+	require('./user/ticketSector')(app, db);
+	require('./user/issue')(app, db);
+	require('./user/index')(app, db);
 
 	app.route('/logout')
 		.get((req, res) => {
@@ -26,7 +25,9 @@ module.exports = (app, db) => {
 
 	app.route('*')
 		.get((req, res) => {
-			const viewpath = req.isAuthenticated() ? `${__dirname}/../views/staff.html` : `${__dirname}/../views/guest.html`;
+			const viewpath = req.isAuthenticated() ?
+				`${__dirname}/../views/${req.user.role === 'guest' ? 'guest' : 'user'}.html` : `${__dirname}/../views/anonymous.html`;
+			console.log(viewpath);
 			return res.sendFile(path.resolve(viewpath));
 		});
 

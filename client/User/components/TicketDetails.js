@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import swal from 'sweetalert2';
 
-import { getTicketDetails, getTicketDetailsSuccess, addTicketComment, listTicketComment, updateTicket } from '../actions/Ticket';
+import { getTicketDetails, addTicketComment, listTicketComment, updateTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
 import { listIssue } from '../actions/Issue';
 import { toDateString } from '../helpers';
@@ -46,13 +46,8 @@ export default class TicketDetails extends Component {
 
 	async componentDidMount() {
 		const { ticketId } = this.state;
-		let ticket = this.props.ticket.list.find((item) => item._id === ticketId);
-		if (!ticket) {
-			await this.props.dispatch(getTicketDetails(ticketId));
-			ticket = this.props.ticket.current;
-		} else {
-			await this.props.dispatch(getTicketDetailsSuccess(ticket));
-		}
+		await this.props.dispatch(getTicketDetails(ticketId));
+		const ticket = this.props.ticket.current;
 		await this.props.dispatch(listTicketComment(ticketId));
 		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		this.props.issue.list.length == 0 && await this.props.dispatch(listIssue());

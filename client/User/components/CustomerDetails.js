@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import swal from 'sweetalert2';
-import { Link } from 'react-router-dom';
 
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
 import { createTicket } from '../actions/Ticket';
@@ -72,7 +71,6 @@ export default class CustomerDetails extends Component {
 		$('#update-customer-note').val(note);
 		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		this.props.issue.list.length == 0 && await this.props.dispatch(listIssue());
-		// await this.props.dispatch(listTicket({ customerId }));
 	}
 
 	async updateCustomer() {
@@ -171,7 +169,7 @@ export default class CustomerDetails extends Component {
 											</div>
 											<div className="form-group col-sm-12">
 												<label htmlFor="update-customer-email">Email</label>
-												<input type="email" className="form-control" id="update-customer-email" />
+												<input type="email" className="form-control" id="update-customer-email" disabled />
 											</div>
 											<div className="form-group col-sm-12">
 												<label htmlFor="update-customer-phone">Phone</label>

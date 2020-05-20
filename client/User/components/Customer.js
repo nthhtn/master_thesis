@@ -47,7 +47,7 @@ export default class Customer extends Component {
 		const phone = $('#create-customer-phone').val();
 		const address = $('#create-customer-address').val();
 		const note = $('#create-customer-note').val();
-		if (!fullName) {
+		if (!fullName || !email) {
 			$('#create-customer-error').text('Customer name must not be empty!');
 			return;
 		}
@@ -102,8 +102,8 @@ export default class Customer extends Component {
 														<input type="text" className="form-control" id="create-customer-name" />
 													</div>
 													<div className="form-group col-sm-12">
-														<label htmlFor="create-customer-email">Email</label>
-														<input type="email" className="form-control" id="create-customer-email" />
+														<label htmlFor="create-customer-email">Email*</label>
+														<input type="email" className="form-control" id="create-customer-email" placeholder="Customer email cannot be changed later" />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="create-customer-phone">Phone</label>

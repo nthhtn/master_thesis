@@ -8,7 +8,8 @@ import { ObjectID } from 'mongodb';
 // 	lastName: 'string',
 // 	phone: 'string',
 // 	address: 'string',
-// 	userType: 'string'
+// 	role: 'string',
+// 	customerId: 'string'
 // };
 
 export default class UserModel {

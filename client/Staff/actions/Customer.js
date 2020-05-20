@@ -1,3 +1,5 @@
+import { listTicket } from './Ticket';
+
 export function createCustomer(customer) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/customers`, {
@@ -33,6 +35,7 @@ export function getCustomerDetails(id) {
 		let responseJson = await response.json();
 		const customer = responseJson.result;
 		dispatch(getCustomerDetailsSuccess(customer));
+		dispatch(listTicket({ ownerId: id }));
 	};
 };
 

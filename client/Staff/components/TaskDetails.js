@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, PureComponent } from 'react';
 import { Link } from 'react-router-dom'
 import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import swal from 'sweetalert2';
@@ -7,6 +7,37 @@ import { getTaskDetails, updateTask } from '../actions/Task';
 import { toDateString } from '../helpers';
 
 let self;
+
+const statusClass = { todo: 'secondary', doing: 'primary', reviewing: 'warning', completed: 'success', canceled: 'danger' };
+const priorityClass = { normal: 'primary', important: 'warning', low: 'success', critical: 'danger' };
+
+class ChildTask extends PureComponent {
+
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+
+	render() {
+		const { _id, name, status, priority, assignee, dueAt, viewTask } = this.props;
+		return (
+			<tr onClick={() => viewTask(_id)}>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '20%', color: '#5c80d1' }}>
+					{name}
+				</td>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
+				<td style={{ width: '8%' }}><span className={'badge badge-' + priorityClass[priority]}>{priority}</span></td>
+				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>
+					{assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unassigned'}
+				</td>
+				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
+					<em>{toDateString(dueAt)}</em>
+				</td>
+			</tr>
+		);
+	}
+
+}
 
 export default class TaskDetails extends Component {
 
@@ -31,7 +62,7 @@ export default class TaskDetails extends Component {
 		$('#update-task-due').datetimepicker({ minDate: new Date(), disabledDates: [new Date()] });
 		await this.props.dispatch(getTaskDetails(taskId));
 		const { current } = this.props.task;
-		const { name, description, status, priority, assignee, dueAt, parent } = current;
+		const { name, description, status, priority, assignee, dueAt, parent, children } = current;
 		$('#update-task-name').val(name);
 		$('#update-task-description').val(description);
 		$('#update-task-status').val(status);
@@ -99,9 +130,13 @@ export default class TaskDetails extends Component {
 		});
 	}
 
+	viewTask(id) {
+		window.open('/tasks/' + id);
+	}
+
 	render() {
 		const { current } = this.props.task;
-		const { name, workgroup } = current;
+		const { name, workgroup, children, parent } = current;
 		const searchUserState = {
 			allowNew: this.state.userAllowNew,
 			isLoading: this.state.userIsLoading,
@@ -192,7 +227,9 @@ export default class TaskDetails extends Component {
 											<label>Workgroup: <Link to={`/workgroups/${workgroup._id}`}>{workgroup.name}</Link></label>
 										</div>
 										<div className="form-group col-sm-12">
-											<label htmlFor="update-task-parent">Parent task</label>
+											<label htmlFor="update-task-parent">Parent task:&nbsp;
+											{!parent ? '' : <span style={{ color: '#5c80d1', cursor: 'pointer' }} onClick={() => this.viewTask(parent._id)}>{parent.name}</span>}
+											</label>
 											<div className="input-group">
 												<AsyncTypeahead
 													{...searchTaskState}
@@ -211,7 +248,12 @@ export default class TaskDetails extends Component {
 											</div>
 										</div>
 										<div className="form-group col-sm-12">
-											<label>Children tasks:</label> 0
+											<label>Children tasks:</label> {children.length}
+											<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
+												<tbody>
+													{children.map((item) => <ChildTask key={item._id} {...item} viewTask={this.viewTask} />)}
+												</tbody>
+											</table>
 										</div>
 									</div>
 								</div>

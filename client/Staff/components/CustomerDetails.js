@@ -3,7 +3,7 @@ import swal from 'sweetalert2';
 import { Link } from 'react-router-dom';
 
 import { getCustomerDetails, updateCustomer, deleteCustomer } from '../actions/Customer';
-import { createTicket, listTicket } from '../actions/Ticket';
+import { createTicket } from '../actions/Ticket';
 import { listTicketSector } from '../actions/TicketSector';
 import { listIssue } from '../actions/Issue';
 import { toDateString } from '../helpers';
@@ -28,8 +28,8 @@ class TicketItem extends Component {
 		const { _id, title, message, createdAt, sector, issue, status, severity } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-					<Link className="font-w600" to={`/tickets/${_id}`}>{title}</Link>
+				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#5c80d1', fontWeight: 600 }}>
+					{title}
 				</td>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
 					{message}
@@ -72,7 +72,7 @@ export default class CustomerDetails extends Component {
 		$('#update-customer-note').val(note);
 		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		this.props.issue.list.length == 0 && await this.props.dispatch(listIssue());
-		await this.props.dispatch(listTicket());
+		// await this.props.dispatch(listTicket({ customerId }));
 	}
 
 	async updateCustomer() {

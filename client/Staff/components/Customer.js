@@ -20,8 +20,8 @@ class CustomerItem extends Component {
 		const { fullName, email, phone, address, note, _id } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td className="font-w600">
-					<Link className="font-w600" to={`/customers/${_id}`}>{fullName}</Link>
+				<td className="font-w600" style={{ color: '#5c80d1' }}>
+					{fullName}
 				</td>
 				<td><em className="text-muted">{email}</em></td>
 				<td>{phone}</td>

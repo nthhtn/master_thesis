@@ -50,7 +50,10 @@ export function getTaskDetails(id) {
 			responseJson = await response.json();
 			parent = responseJson.result;
 		}
-		dispatch(getTaskDetailsSuccess({ ...task, workgroup, assignee, parent }));
+		response = await fetch(`/api/tasks?parentId=${id}`, { credentials: 'same-origin' });
+		responseJson = await response.json();
+		const children = responseJson.result;
+		dispatch(getTaskDetailsSuccess({ ...task, workgroup, assignee, parent, children }));
 	};
 };
 

@@ -27,7 +27,7 @@ class TicketItem extends Component {
 		const { _id, title, message, owner, assignee, sector, issue, status, severity, createdAt } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
-				<td className="font-w600" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+				<td className="font-w600" style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#5c80d1' }}>
 					{title}
 				</td>
 				<td style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>

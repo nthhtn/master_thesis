@@ -6,8 +6,7 @@ import { ObjectID } from 'mongodb';
 // 	fullName: 'string',
 // 	phone: 'string',
 // 	address: 'string',
-// 	note: 'string',
-// 	organizationId: 'string'
+// 	note: 'string'
 // };
 
 export default class CustomerModel {

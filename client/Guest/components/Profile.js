@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import { getCustomerDetails } from '../actions/Customer';
+import { toDateString } from '../helpers';
 
 let self;
 const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
@@ -30,7 +30,7 @@ class TicketItem extends Component {
 				<td style={{ width: '10%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '10%' }}>Assignee</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '10%' }}>
-					<em>{createdAt}</em>
+					<em>{toDateString(createdAt)}</em>
 				</td>
 			</tr>
 		);
@@ -47,8 +47,6 @@ export default class Profile extends Component {
 	}
 
 	async componentDidMount() {
-		const { me } = this.props.user;
-		await this.props.dispatch(getCustomerDetails(me.customerId));
 		const { current } = this.props.customer;
 		const { fullName, email, phone, address } = current;
 		$('#update-customer-name').val(fullName);
@@ -77,11 +75,6 @@ export default class Profile extends Component {
 									<div className="block">
 										<div className="block-header block-header-default">
 											<h3 className="block-title">My Info</h3>
-											<div className="block-options">
-												<button type="button" className="btn btn-danger" onClick={this.deleteCustomer}>
-													<i className="fa fa-trash-alt"></i>
-												</button>
-											</div>
 										</div>
 										<div className="block-content font-size-sm">
 											<div className="row">

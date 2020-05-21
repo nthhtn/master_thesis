@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { getTicketDetails, addTicketComment, listTicketComment } from '../actions/Ticket';
+import { toDateString } from '../helpers';
 
 class CommentItem extends Component {
 
@@ -18,7 +19,7 @@ class CommentItem extends Component {
 					<p>{commenter.firstName + " " + commenter.lastName}</p>
 				</td>
 				<td>
-					<em>{createdAt}</em>
+					<em>{toDateString(createdAt)}</em>
 					<div style={{ whiteSpace: 'pre-wrap' }}>{text}</div>
 				</td>
 			</tr>
@@ -53,7 +54,6 @@ export default class TicketDetails extends Component {
 	}
 
 	render() {
-		console.log(this.props);
 		const { comments, current } = this.props.ticket;
 		const { title, message, createdAt } = current;
 		const customer = this.props.customer.current;
@@ -82,7 +82,7 @@ export default class TicketDetails extends Component {
 											<p>{customer.fullName}</p>
 										</td>
 										<td>
-											<em>{createdAt}</em>
+											<em>{toDateString(createdAt)}</em>
 											<div style={{ whiteSpace: 'pre-wrap' }}>{message}</div>
 											<hr />
 										</td>

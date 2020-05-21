@@ -2,14 +2,12 @@ import express from 'express';
 
 import WorkgroupModel from '../../models/workgroup';
 import WorkgroupMemberModel from '../../models/workgroupMember';
-import UserModel from '../../models/user';
 
 module.exports = (app, db) => {
 
 	const router = express.Router();
 	const Workgroup = new WorkgroupModel(db);
 	const WorkgroupMember = new WorkgroupMemberModel(db);
-	const User = new UserModel(db);
 
 	router.route('/')
 		.get(async (req, res) => {
@@ -23,7 +21,7 @@ module.exports = (app, db) => {
 		.post(async (req, res) => {
 			try {
 				const { name, description, members } = req.body;
-				const result = await Workgroup.create({ name, description });
+				const result = await Workgroup.create({ name, description, creatorId: req.user._id });
 				await WorkgroupMember.createMany(members.map((member) => ({ workgroupId: result._id, userId: member })));
 				return res.json({ success: true, result });
 			} catch (error) {

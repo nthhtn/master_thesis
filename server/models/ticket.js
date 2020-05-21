@@ -9,7 +9,9 @@ import { ObjectID } from 'mongodb';
 // 	ownerId: 'string',
 // 	assigneeId: 'string',
 // 	issueId: 'string',
-// 	sectorId: 'string'
+// 	sectorId: 'string',
+// 	creatorId: 'string',
+// 	lastActivityAt: 'number'
 // };
 
 export default class TicketModel {
@@ -24,6 +26,7 @@ export default class TicketModel {
 		const datetime = Date.now();
 		data.createdAt = datetime;
 		data.updatedAt = datetime;
+		data.lastActivityAt = datetime;
 		try {
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);

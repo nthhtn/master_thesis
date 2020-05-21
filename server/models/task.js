@@ -10,7 +10,8 @@ import { ObjectID } from 'mongodb';
 // 	assigneeId: 'string',
 // 	workgroupId: 'string',
 // 	parentId: 'string',
-// 	dueAt: 'number'
+// 	dueAt: 'number',
+// 	lastActivityAt: 'number'
 // };
 
 export default class TaskModel {
@@ -25,6 +26,7 @@ export default class TaskModel {
 		const datetime = Date.now();
 		data.createdAt = datetime;
 		data.updatedAt = datetime;
+		data.lastActivityAt = datetime;
 		try {
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);

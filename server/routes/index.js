@@ -20,14 +20,13 @@ module.exports = (app, db) => {
 	app.route('/logout')
 		.get((req, res) => {
 			if (req.isAuthenticated()) { req.logOut(); }
-			return res.sendFile(path.resolve(`${__dirname}/../views/guest.html`));
+			return res.sendFile(path.resolve(`${__dirname}/../views/anonymous.html`));
 		});
 
 	app.route('*')
 		.get((req, res) => {
 			const viewpath = req.isAuthenticated() ?
 				`${__dirname}/../views/${req.user.role === 'guest' ? 'guest' : 'user'}.html` : `${__dirname}/../views/anonymous.html`;
-			console.log(viewpath);
 			return res.sendFile(path.resolve(viewpath));
 		});
 

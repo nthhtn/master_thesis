@@ -3,7 +3,9 @@ import { ObjectID } from 'mongodb';
 // let workgroup = {
 // 	_id: 'string',
 // 	name: 'string',
-// 	description: 'string'
+// 	description: 'string',
+// 	creatorId: 'string',
+// 	lastActivityAt: 'number'
 // };
 
 export default class WorkgroupModel {
@@ -18,6 +20,7 @@ export default class WorkgroupModel {
 		const datetime = Date.now();
 		data.createdAt = datetime;
 		data.updatedAt = datetime;
+		data.lastActivityAt = datetime;
 		try {
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);

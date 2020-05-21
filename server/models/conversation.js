@@ -5,7 +5,8 @@ import { ObjectID } from 'mongodb';
 // 	title: 'string',
 // 	content: 'string',
 // 	workgroupId: 'string',
-// 	creatorId: 'string'
+// 	creatorId: 'string',
+// 	lastActivityAt: 'number'
 // };
 
 export default class ConversationModel {
@@ -20,6 +21,7 @@ export default class ConversationModel {
 		const datetime = Date.now();
 		data.createdAt = datetime;
 		data.updatedAt = datetime;
+		data.lastActivityAt = datetime;
 		try {
 			await this._db.collection(this._table).insertOne(data);
 			return Promise.resolve(data);

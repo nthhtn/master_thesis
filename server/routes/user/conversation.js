@@ -2,12 +2,14 @@ import express from 'express';
 
 import ConversationModel from '../../models/conversation';
 import ConversationCommentModel from '../../models/conversationComment';
+import WorkgroupModel from '../../models/workgroup';
 
 module.exports = (app, db) => {
 
 	const router = express.Router();
 	const Conversation = new ConversationModel(db);
 	const ConversationComment = new ConversationCommentModel(db);
+	const Workgroup = new WorkgroupModel(db);
 
 	router.route('/')
 		.get(async (req, res) => {
@@ -21,6 +23,7 @@ module.exports = (app, db) => {
 		.post(async (req, res) => {
 			try {
 				const result = await Conversation.create({ ...req.body, creatorId: req.user._id });
+				await Workgroup.update(result.workgroupId, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -42,6 +45,7 @@ module.exports = (app, db) => {
 			try {
 				const data = { ...req.body, conversationId: req.params.id, commenterId: req.user._id };
 				const result = await ConversationComment.create(data);
+				await Conversation.update(req.params.id, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

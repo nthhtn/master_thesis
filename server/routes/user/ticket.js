@@ -50,6 +50,7 @@ module.exports = (app, db) => {
 			try {
 				const data = { ...req.body, ticketId: req.params.id, commenterId: req.user._id };
 				const result = await TicketComment.create(data);
+				await Ticket.update(req.params.id, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

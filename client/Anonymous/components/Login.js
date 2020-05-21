@@ -58,11 +58,11 @@ export default class Home extends Component {
 														</div>
 														<div className="form-group">
 															<div className="form-check form-check-inline">
-																<input className="form-check-input" type="radio" id="login-user" name="login-role" value="option1" defaultChecked />
+																<input className="form-check-input" type="radio" id="login-user" name="login-role" value="user" defaultChecked />
 																<label className="form-check-label" htmlFor="login-user">Staff</label>
 															</div>
 															<div className="form-check form-check-inline">
-																<input className="form-check-input" type="radio" id="login-guest" name="login-role" value="option2" />
+																<input className="form-check-input" type="radio" id="login-guest" name="login-role" value="guest" />
 																<label className="form-check-label" htmlFor="login-guest">Guest</label>
 															</div>
 														</div>

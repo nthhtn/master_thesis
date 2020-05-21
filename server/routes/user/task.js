@@ -1,11 +1,13 @@
 import express from 'express';
 
 import TaskModel from '../../models/task';
+import WorkgroupModel from '../../models/workgroup';
 
 module.exports = (app, db) => {
 
 	const router = express.Router();
 	const Task = new TaskModel(db);
+	const Workgroup = new WorkgroupModel(db);
 
 	router.route('/')
 		.get(async (req, res) => {
@@ -19,6 +21,7 @@ module.exports = (app, db) => {
 		.post(async (req, res) => {
 			try {
 				const result = await Task.create(req.body);
+				await Workgroup.update(result.workgroupId, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

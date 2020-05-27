@@ -39,12 +39,15 @@ export default class User extends Component {
 	async createUser() {
 		const firstName = $('#create-user-firstname').val();
 		const lastName = $('#create-user-lastname').val();
-		const role = $('#create-user-type').val();
-		if (!firstName || !lastName || role == 0) {
+		const email = $('#create-user-email').val();
+		const role = $('#create-user-role').val();
+		const phone = $('#create-user-phone').val() || '';
+		const address = $('#create-user-address').val() || '';
+		if (!firstName || !lastName || !email || role == 0) {
 			$('#create-user-error').text('Missing required field(s)');
 			return;
 		}
-		// await self.props.dispatch(createUser({ firstName, lastName, role, sectorId }));
+		await self.props.dispatch(createUser({ firstName, lastName, email, role, phone, address }));
 		$('#create-user-error').text('');
 		$('#modal-create-user input').val('');
 		$('#modal-create-user textarea').val('');
@@ -101,12 +104,24 @@ export default class User extends Component {
 														<input type="text" className="form-control" id="create-user-lastname" />
 													</div>
 													<div className="form-group col-sm-6">
-														<label htmlFor="create-user-type">Role*</label>
-														<select className="form-control" id="create-user-type">
+														<label htmlFor="create-user-email">Email*</label>
+														<input type="email" className="form-control" id="create-user-email" />
+													</div>
+													<div className="form-group col-sm-6">
+														<label htmlFor="create-user-role">Role*</label>
+														<select className="form-control" id="create-user-role">
 															<option value="0">Please select</option>
 															<option value="staff">Staff</option>
 															<option value="manager">Manager</option>
 														</select>
+													</div>
+													<div className="form-group col-sm-6">
+														<label htmlFor="create-user-phone">Phone</label>
+														<input type="text" className="form-control" id="create-user-phone" />
+													</div>
+													<div className="form-group col-sm-6">
+														<label htmlFor="create-user-address">Address</label>
+														<input type="text" className="form-control" id="create-user-address" />
 													</div>
 													<div className="form-group col-sm-12">
 														<label id="create-user-error" style={{ color: 'red' }}></label>

@@ -68,7 +68,7 @@ export default class TicketCommentModel {
 			let: { commenterId: '$commenterId' },
 			pipeline: [
 				{ $match: { $expr: { $eq: ['$_id', '$$commenterId'] } } },
-				{ $project: { firstName: 1, lastName: 1, email: 1 } }
+				{ $project: { firstName: 1, lastName: 1, email: 1, role: 1 } }
 			],
 			as: 'commenter'
 		};

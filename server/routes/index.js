@@ -3,25 +3,30 @@ import { isLoggedIn } from '../helpers/middleware';
 
 module.exports = (app, db) => {
 
-	require('./guest')(app, db);
+	require('./unauthenticated')(app, db);
 
 	app.use('/api', isLoggedIn);
 
-	require('./user/workgroup')(app, db);
-	require('./user/conversation')(app, db);
-	require('./user/task')(app, db);
-	require('./user/customer')(app, db);
-	require('./user/ticket')(app, db);
-	require('./user/user')(app, db);
-	require('./user/ticketSector')(app, db);
-	require('./user/issue')(app, db);
-	require('./user/index')(app, db);
+	require('./authenticated/workgroup')(app, db);
+	require('./authenticated/conversation')(app, db);
+	require('./authenticated/task')(app, db);
+	require('./authenticated/customer')(app, db);
+	require('./authenticated/ticket')(app, db);
+	require('./authenticated/user')(app, db);
+	require('./authenticated/ticketSector')(app, db);
+	require('./authenticated/issue')(app, db);
+	require('./authenticated/index')(app, db);
 
 	app.route('/logout')
 		.get((req, res) => {
 			if (req.isAuthenticated()) { req.logOut(); }
 			return res.sendFile(path.resolve(`${__dirname}/../views/anonymous.html`));
 		});
+
+	// app.route('/info')
+	// 	.get((req, res) => {
+	// 		return res.render('ticket_reply', {});
+	// 	});
 
 	app.route('*')
 		.get((req, res) => {

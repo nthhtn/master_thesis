@@ -1,7 +1,10 @@
 import express from 'express';
+import fs from 'fs';
 
 import TicketModel from '../../models/ticket';
 import TicketCommentModel from '../../models/ticketComment';
+import { sendMail } from '../../helpers/mailer';
+import { host } from '../../../config/host';
 
 module.exports = (app, db) => {
 
@@ -50,8 +53,20 @@ module.exports = (app, db) => {
 			try {
 				const data = { ...req.body, ticketId: req.params.id, commenterId: req.user._id };
 				const result = await TicketComment.create(data);
-				await Ticket.update(req.params.id, { lastActivityAt: Date.now() });
-				return res.json({ success: true, result });
+				const ticket = await Ticket.update(req.params.id, { lastActivityAt: Date.now() });
+				res.json({ success: true, result });
+				const templateData = {
+					createdAt: new Date(result.createdAt),
+					commenter: req.user.role === 'guest' ? req.user.lastName : req.user.firstName + ' ' + req.user.lastName,
+					text: result.text,
+					link: host + '/tickets/' + result.ticketId
+				};
+				console.log(templateData);
+				const path = `${__dirname}/../../views/ticket_reply.html`;
+				let html = fs.readFileSync(path, 'utf8');
+				Object.keys(templateData).map((key) => html = html.replace('{{' + key + '}}', templateData[key]));
+				console.log(html);
+				sendMail({ to: 'thehien115@gmail.com', subject: `Re: Ticket "${ticket.title}"`, body: html });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
 			}

@@ -55,6 +55,7 @@ module.exports = (app, db) => {
 		.put(async (req, res) => {
 			try {
 				const result = await Task.update(req.params.id, req.body);
+				await Workgroup.update(result.workgroupId, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });
@@ -63,6 +64,7 @@ module.exports = (app, db) => {
 		.delete(async (req, res) => {
 			try {
 				const result = await Task.delete(req.params.id);
+				await Workgroup.update(result.workgroupId, { lastActivityAt: Date.now() });
 				return res.json({ success: true, result });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

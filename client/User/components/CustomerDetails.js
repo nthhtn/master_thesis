@@ -122,15 +122,18 @@ export default class CustomerDetails extends Component {
 		const status = $('#create-ticket-status').val();
 		const severity = $('#create-ticket-severity').val();
 		const sectorId = $('#create-ticket-sector').val() == 0 ? '' : $('#create-ticket-sector').val();
-		if (!title || !message || status == 0) {
+		if (!title || !message || status == 0 || severity == 0) {
 			$('#create-ticket-error').text('Missing required field(s)');
 			return;
 		}
 		const data = { title, message, ownerId: self.state.customerId, status, severity, sectorId };
-		await self.props.dispatch(createTicket(data));
+		const owner = self.props.customer.current;
+		console.log(owner);
+		await self.props.dispatch(createTicket(data, owner));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
 		$('#modal-create-ticket textarea').val('');
+		$('#modal-create-ticket select').val(0);
 		$('#modal-create-ticket').modal('hide');
 	}
 

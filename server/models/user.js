@@ -3,6 +3,7 @@ import { ObjectID } from 'mongodb';
 // let user = {
 // 	_id: 'string',
 // 	email: 'string',
+// 	salt: 'string',
 // 	password: 'string',
 // 	firstName: 'string',
 // 	lastName: 'string',
@@ -61,7 +62,7 @@ export default class UserModel {
 
 	async queryByFields(fields = {}) {
 		try {
-			const result = await this._db.collection(this._table).find(fields).toArray();
+			const result = await this._db.collection(this._table).find(fields, { projection: { password: 0 } }).toArray();
 			return await result;
 		} catch (error) {
 			return Promise.reject(error.message);

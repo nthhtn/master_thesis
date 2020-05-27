@@ -1,7 +1,8 @@
 import express from 'express';
-import { hashPassword, generateSalt } from '../../helpers/password';
 import passport from 'passport';
 import { Strategy } from 'passport-local';
+
+import { hashPassword, generateSalt } from '../../helpers/password';
 import UserModel from '../../models/user';
 import CustomerModel from '../../models/customer';
 

@@ -2,9 +2,11 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { toDateString } from '../helpers';
+import { createTicket } from '../actions/Ticket';
 
 let self;
 const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
 
 class TicketItem extends Component {
 
@@ -18,7 +20,7 @@ class TicketItem extends Component {
 	}
 
 	render() {
-		const { _id, title, message, createdAt, status } = this.props;
+		const { _id, title, message, createdAt, status, severity } = this.props;
 		return (
 			<tr style={{ cursor: 'pointer' }} onClick={this.handleClick.bind(this)}>
 				<td style={{ maxWidth: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: '#5c80d1', fontWeight: 600 }}>
@@ -28,6 +30,7 @@ class TicketItem extends Component {
 					{message}
 				</td>
 				<td style={{ width: '10%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
+				<td style={{ width: '10%' }}><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '10%' }}>Assignee</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '10%' }}>
 					<em>{toDateString(createdAt)}</em>
@@ -53,6 +56,23 @@ export default class Profile extends Component {
 		$('#update-customer-email').val(email);
 		$('#update-customer-phone').val(phone);
 		$('#update-customer-address').val(address);
+	}
+
+	async createTicket() {
+		const title = $('#create-ticket-title').val();
+		const message = $('#create-ticket-message').val();
+		const severity = $('#create-ticket-severity').val();
+		if (!title || !message || severity == 0) {
+			$('#create-ticket-error').text('Missing required field(s)');
+			return;
+		}
+		const data = { title, message, ownerId: self.props.customer.current._id, status: 'open', severity };
+		await self.props.dispatch(createTicket(data));
+		$('#create-ticket-error').text('');
+		$('#modal-create-ticket input').val('');
+		$('#modal-create-ticket textarea').val('');
+		$('#modal-create-ticket select').val(0);
+		$('#modal-create-ticket').modal('hide');
 	}
 
 	render() {
@@ -137,6 +157,16 @@ export default class Profile extends Component {
 																<div className="form-group col-sm-12">
 																	<label htmlFor="create-ticket-message">Message*</label>
 																	<textarea rows="4" className="form-control" id="create-ticket-message" />
+																</div>
+																<div className="form-group col-sm-12">
+																	<label htmlFor="create-ticket-severity">Severity*</label>
+																	<select className="form-control" id="create-ticket-severity">
+																		<option value="0">Please select</option>
+																		<option value="low">Low</option>
+																		<option value="normal">Normal</option>
+																		<option value="high">High</option>
+																		<option value="urgent">Urgent</option>
+																	</select>
 																</div>
 																<div className="form-group col-sm-12">
 																	<label id="create-ticket-error" style={{ color: 'red' }}></label>

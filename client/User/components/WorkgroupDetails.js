@@ -22,6 +22,12 @@ class MemberItem extends Component {
 
 	render() {
 		const { _id, firstName, lastName, email, removeMember } = this.props;
+		const removeButton = removeMember ?
+			(<div>
+				<button type="button" className="btn btn-sm btn-danger" onClick={() => removeMember({ _id, email, firstName, lastName })}>
+					<i className="fa fa-fw fa-times"></i>
+				</button>
+			</div>) : '';
 		return (
 			<li>
 				<a className="media py-2" href={undefined}>
@@ -32,11 +38,7 @@ class MemberItem extends Component {
 						<div className="font-w600">{firstName + ' ' + lastName}</div>
 						<div className="font-w400 text-muted" style={{ wordBreak: 'break-all' }}>{email}</div>
 					</div>
-					<div>
-						<button type="button" className="btn btn-sm btn-danger" onClick={() => removeMember({ _id, email, firstName, lastName })}>
-							<i className="fa fa-fw fa-times"></i>
-						</button>
-					</div>
+					{removeButton}
 				</a>
 			</li>
 		);
@@ -52,7 +54,7 @@ class ConversationItem extends Component {
 	}
 
 	render() {
-		const { _id, title, content, createdAt, creator } = this.props;
+		const { _id, title, content, lastActivityAt, creator } = this.props;
 		return (
 			<tr>
 				<td style={{ width: '20%' }}>
@@ -63,7 +65,7 @@ class ConversationItem extends Component {
 				</td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>{creator.firstName + ' ' + creator.lastName}</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
-					<em>{toDateString(createdAt)}</em>
+					<em>{toDateString(lastActivityAt)}</em>
 				</td>
 			</tr>
 		);
@@ -231,11 +233,10 @@ export default class WorkgroupDetails extends Component {
 
 	render() {
 		const { current } = this.props.workgroup;
-		const { name, members } = current;
-		// console.log(current);
+		const { name, members, creatorId } = current;
+		const { me } = self.props.user;
 		const listConversation = this.props.conversation.list;
 		const listTask = this.props.task.list;
-		// console.log(listTask);
 		const searchMemberState = {
 			isLoading: this.state.memberIsLoading,
 			multiple: true,
@@ -311,7 +312,8 @@ export default class WorkgroupDetails extends Component {
 											</div>
 										</div>
 										<ul className="nav-items font-size-sm">
-											{members.map((item) => <MemberItem key={item._id} {...item} removeMember={this.removeMember} />)}
+											{members.map((item) => <MemberItem key={item._id} {...item}
+												removeMember={me._id === creatorId && me._id !== item._id ? this.removeMember : undefined} />)}
 										</ul>
 									</div>
 								</div>

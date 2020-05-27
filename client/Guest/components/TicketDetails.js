@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import { getTicketDetails, addTicketComment, listTicketComment } from '../actions/Ticket';
 import { toDateString } from '../helpers';
 
+const statusClass = { new: 'secondary', open: 'primary', inprogress: 'warning', resolved: 'success', closed: 'danger' };
+const severityClass = { normal: 'primary', high: 'warning', low: 'success', urgent: 'danger' };
+
 class CommentItem extends Component {
 
 	constructor(props) {
@@ -12,11 +15,12 @@ class CommentItem extends Component {
 
 	render() {
 		const { _id, text, createdAt, commenter } = this.props;
+		const commenterName = commenter.role === 'guest' ? commenter.lastName : commenter.firstName + " " + commenter.lastName;
 		return (
 			<tr>
 				<td className="d-none d-sm-table-cell text-center" style={{ 'width': '140px' }}>
 					<p><img className="img-avatar" src="/assets/oneui/media/avatars/avatar7.jpg" alt="" /></p>
-					<p>{commenter.firstName + " " + commenter.lastName}</p>
+					<p>{commenterName}</p>
 				</td>
 				<td>
 					<em>{toDateString(createdAt)}</em>
@@ -55,7 +59,7 @@ export default class TicketDetails extends Component {
 
 	render() {
 		const { comments, current } = this.props.ticket;
-		const { title, message, createdAt } = current;
+		const { title, message, createdAt, status, severity } = current;
 		const customer = this.props.customer.current;
 		return (
 			<main id="main-container">
@@ -85,6 +89,18 @@ export default class TicketDetails extends Component {
 											<em>{toDateString(createdAt)}</em>
 											<div style={{ whiteSpace: 'pre-wrap' }}>{message}</div>
 											<hr />
+											<div className="row">
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-status">Status&nbsp;
+													<span className={'badge badge-' + statusClass[status]}>{status}</span>
+													</label>
+												</div>
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-severity">Severity&nbsp;
+													<span className={'badge badge-' + severityClass[severity]}>{severity}</span>
+													</label>
+												</div>
+											</div>
 										</td>
 									</tr>
 								</tbody>

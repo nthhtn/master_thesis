@@ -2,6 +2,7 @@ import express from 'express';
 
 import UserModel from '../../models/user';
 import WorkgroupMemberModel from '../../models/workgroupMember';
+import { generateSalt, hashPassword } from '../../helpers/password';
 
 module.exports = (app, db) => {
 
@@ -20,9 +21,14 @@ module.exports = (app, db) => {
 		})
 		.post(async (req, res) => {
 			try {
-				const result = await User.create(req.body);
+				let data = Object.assign({}, req.body, { salt: generateSalt() });
+				data.password = hashPassword('123456', data.salt);
+				let result = await User.create(data);
+				delete result.salt;
+				delete result.password;
 				return res.json({ success: true, result });
 			} catch (error) {
+				console.log(error);
 				return res.status(400).json({ success: false, error: error.message });
 			}
 		});

@@ -7,7 +7,7 @@ import { MongoClient } from 'mongodb';
 import passport from 'passport';
 
 import { db_url, db_name } from './config/mongodb';
-import { port } from './config/port';
+import { port } from './config/host';
 
 const app = express();
 

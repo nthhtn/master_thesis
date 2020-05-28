@@ -43,15 +43,15 @@ store.dispatch(getMyProfile()).then(() => {
 											</Link>
 										</li>
 										<li className="nav-main-item">
-											<Link className="nav-main-link active" to="/tickets">
-												<i className="nav-main-link-icon fa fa-ticket-alt"></i>
-												<span className="nav-main-link-name">Tickets</span>
-											</Link>
-										</li>
-										<li className="nav-main-item">
 											<Link className="nav-main-link active" to="/customers">
 												<i className="nav-main-link-icon fa fa-user-tie"></i>
 												<span className="nav-main-link-name">Customers</span>
+											</Link>
+										</li>
+										<li className="nav-main-item">
+											<Link className="nav-main-link active" to="/tickets">
+												<i className="nav-main-link-icon fa fa-ticket-alt"></i>
+												<span className="nav-main-link-name">Tickets</span>
 											</Link>
 										</li>
 										<li className="nav-main-heading">Manager Features</li>

@@ -90,7 +90,7 @@ class TaskItem extends Component {
 				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td style={{ width: '8%' }}><span className={'badge badge-' + priorityClass[priority]}>{priority}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>
-					{assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unassigned'}
+					{assignee ? assignee.firstName + ' ' + assignee.lastName : ''}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(dueAt)}</em>
@@ -213,22 +213,25 @@ export default class WorkgroupDetails extends Component {
 		const dueAt = $('#create-task-due').val();
 		const { workgroupId } = self.state;
 		const assigneeId = self.state.assigneeSelected.length > 0 ? self.state.assigneeSelected[0]._id : null;
-		const assignee = assignee ? self.state.assigneeSelected[0] : null;
+		const assignee = assigneeId ? self.state.assigneeSelected[0] : null;
+		const parentId = self.state.parentSelected.length > 0 ? self.state.parentSelected[0]._id : null;
+		const parent = parentId ? self.state.parentSelected[0] : null;
 		if (!name || !description || status == 0 || priority == 0 || !workgroupId || !dueAt) {
 			$('#create-task-error').text('Missing required field(s)');
 			return;
 		}
 		const data = {
-			name, description, status, priority, workgroupId, assigneeId,
+			name, description, status, priority, workgroupId, assigneeId, parentId,
 			dueAt: Date.parse(new Date(dueAt))
 		};
-		await self.props.dispatch(createTask(data, assignee));
+		await self.props.dispatch(createTask(data, assignee, parent));
 		$('#create-task-error').text('');
 		$('#modal-create-task input').val('');
 		$('#modal-create-task textarea').val('');
 		$('#modal-create-task select').val(0);
 		$('#modal-create-task').modal('hide');
 		self.refs.searchAssigneeRef.clear();
+		self.refs.searchParentRef.clear();
 	}
 
 	render() {
@@ -350,171 +353,167 @@ export default class WorkgroupDetails extends Component {
 								</div>
 							</div>
 						</div>
-						{members.map((item) => (item._id)).indexOf(me._id) > -1 &&
-							<div className="col-md-6 col-xl-6">
-								<div className="block">
-									<div className="block-header block-header-default">
-										<h3 className="block-title">Conversations</h3>
-										<div className="block-options">
-											<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation">
-												<i className="fa fa-plus"></i>
-											</button>
-										</div>
+						<div className="col-md-6 col-xl-6" hidden={members.map((item) => (item._id)).indexOf(me._id) === -1}>
+							<div className="block">
+								<div className="block-header block-header-default">
+									<h3 className="block-title">Conversations</h3>
+									<div className="block-options">
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-conversation">
+											<i className="fa fa-plus"></i>
+										</button>
 									</div>
-									<div className="block-content">
-										<div className="modal fade" id="modal-create-conversation" tabIndex="-1" role="dialog" aria-labelledby="modal-create-conversation" aria-modal="true" style={{ paddingRight: '15px' }}>
-											<div className="modal-dialog modal-lg" role="document">
-												<div className="modal-content">
-													<div className="block block-themed block-transparent mb-0">
-														<div className="block-header bg-primary-dark">
-															<h3 className="block-title">New Conversation</h3>
-															<div className="block-options">
-																<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
-																	<i className="fa fa-fw fa-times"></i>
-																</button>
+								</div>
+								<div className="block-content">
+									<div className="modal fade" id="modal-create-conversation" tabIndex="-1" role="dialog" aria-labelledby="modal-create-conversation" aria-modal="true" style={{ paddingRight: '15px' }}>
+										<div className="modal-dialog modal-lg" role="document">
+											<div className="modal-content">
+												<div className="block block-themed block-transparent mb-0">
+													<div className="block-header bg-primary-dark">
+														<h3 className="block-title">New Conversation</h3>
+														<div className="block-options">
+															<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
+																<i className="fa fa-fw fa-times"></i>
+															</button>
+														</div>
+													</div>
+													<div className="block-content font-size-sm">
+														<div className="row">
+															<div className="form-group col-sm-12">
+																<label htmlFor="create-conversation-title">Title*</label>
+																<input type="text" className="form-control" id="create-conversation-title" />
+															</div>
+															<div className="form-group col-sm-12">
+																<label htmlFor="create-conversation-content">Content*</label>
+																<textarea rows="4" className="form-control" id="create-conversation-content" />
+															</div>
+															<div className="form-group col-sm-12">
+																<label id="create-conversation-error" style={{ color: 'red' }}></label>
 															</div>
 														</div>
-														<div className="block-content font-size-sm">
-															<div className="row">
-																<div className="form-group col-sm-12">
-																	<label htmlFor="create-conversation-title">Title*</label>
-																	<input type="text" className="form-control" id="create-conversation-title" />
-																</div>
-																<div className="form-group col-sm-12">
-																	<label htmlFor="create-conversation-content">Content*</label>
-																	<textarea rows="4" className="form-control" id="create-conversation-content" />
-																</div>
-																<div className="form-group col-sm-12">
-																	<label id="create-conversation-error" style={{ color: 'red' }}></label>
-																</div>
-															</div>
-														</div>
-														<div className="block-content block-content-full text-right border-top">
-															<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-															<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check"></i> Ok</button>
-														</div>
+													</div>
+													<div className="block-content block-content-full text-right border-top">
+														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createConversation}><i className="fa fa-check"></i> Ok</button>
 													</div>
 												</div>
 											</div>
 										</div>
-										<div className="d-flex justify-content-between push"></div>
-										<div className="pull-x">
-											<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
-												<tbody>
-													{listConversation.map((item) => <ConversationItem key={item._id} {...item} />)}
-												</tbody>
-											</table>
-										</div>
+									</div>
+									<div className="d-flex justify-content-between push"></div>
+									<div className="pull-x">
+										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
+											<tbody>
+												{listConversation.map((item) => <ConversationItem key={item._id} {...item} />)}
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div>
-						}
-						{members.map((item) => (item._id)).indexOf(me._id) > -1 &&
-							<div className="col-md-6 col-xl-6">
-								<div className="block">
-									<div className="block-header block-header-default">
-										<h3 className="block-title">Tasks</h3>
-										<div className="block-options">
-											<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-task">
-												<i className="fa fa-plus"></i>
-											</button>
-										</div>
+						</div>
+						<div className="col-md-6 col-xl-6" hidden={members.map((item) => (item._id)).indexOf(me._id) === -1}>
+							<div className="block">
+								<div className="block-header block-header-default">
+									<h3 className="block-title">Tasks</h3>
+									<div className="block-options">
+										<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-task">
+											<i className="fa fa-plus"></i>
+										</button>
 									</div>
-									<div className="block-content">
-										<div className="modal fade" id="modal-create-task" tabIndex="-1" role="dialog" aria-labelledby="modal-create-task" aria-modal="true" style={{ paddingRight: '15px' }}>
-											<div className="modal-dialog modal-lg" role="document">
-												<div className="modal-content">
-													<div className="block block-themed block-transparent mb-0">
-														<div className="block-header bg-primary-dark">
-															<h3 className="block-title">New Task</h3>
-															<div className="block-options">
-																<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
-																	<i className="fa fa-fw fa-times"></i>
-																</button>
+								</div>
+								<div className="block-content">
+									<div className="modal fade" id="modal-create-task" tabIndex="-1" role="dialog" aria-labelledby="modal-create-task" aria-modal="true" style={{ paddingRight: '15px' }}>
+										<div className="modal-dialog modal-lg" role="document">
+											<div className="modal-content">
+												<div className="block block-themed block-transparent mb-0">
+													<div className="block-header bg-primary-dark">
+														<h3 className="block-title">New Task</h3>
+														<div className="block-options">
+															<button type="button" className="btn-block-option" data-dismiss="modal" aria-label="Close">
+																<i className="fa fa-fw fa-times"></i>
+															</button>
+														</div>
+													</div>
+													<div className="block-content font-size-sm">
+														<div className="row">
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-name">Name*</label>
+																<input type="text" className="form-control" id="create-task-name" />
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-due">Due date*</label>
+																<input type="text" className="form-control" id="create-task-due" />
+															</div>
+															<div className="form-group col-sm-12">
+																<label htmlFor="create-task-description">Description*</label>
+																<textarea rows="4" className="form-control" id="create-task-description" />
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-status">Status*</label>
+																<select className="form-control" id="create-task-status">
+																	<option value="0">Please select</option>
+																	<option value="todo">Todo</option>
+																	<option value="doing">Doing</option>
+																	<option value="reviewing">Reviewing</option>
+																	<option value="completed">Completed</option>
+																	<option value="canceled">Canceled</option>
+																</select>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-priority">Priority*</label>
+																<select className="form-control" id="create-task-priority">
+																	<option value="0">Please select</option>
+																	<option value="low">Low</option>
+																	<option value="normal">Normal</option>
+																	<option value="important">Important</option>
+																	<option value="critical">Critical</option>
+																</select>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-assignee">Assignee</label>
+																<Typeahead
+																	{...searchAssigneeState}
+																	id="create-task-assignee"
+																	labelKey="email"
+																	placeholder="Type to search a user to assign"
+																	ref='searchAssigneeRef'
+																	onChange={this.handleAssigneeChange}
+																/>
+															</div>
+															<div className="form-group col-sm-6">
+																<label htmlFor="create-task-parent">Parent Task</label>
+																<Typeahead
+																	{...searchParentState}
+																	id="create-task-parent"
+																	labelKey="name"
+																	placeholder="Type to search a task as parent to this task"
+																	ref='searchParentRef'
+																	onChange={this.handleParentChange}
+																/>
+															</div>
+															<div className="form-group col-sm-12">
+																<label id="create-task-error" style={{ color: 'red' }}></label>
 															</div>
 														</div>
-														<div className="block-content font-size-sm">
-															<div className="row">
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-name">Name*</label>
-																	<input type="text" className="form-control" id="create-task-name" />
-																</div>
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-due">Due date*</label>
-																	<input type="text" className="form-control" id="create-task-due" />
-																</div>
-																<div className="form-group col-sm-12">
-																	<label htmlFor="create-task-description">Description*</label>
-																	<textarea rows="4" className="form-control" id="create-task-description" />
-																</div>
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-status">Status*</label>
-																	<select className="form-control" id="create-task-status">
-																		<option value="0">Please select</option>
-																		<option value="todo">Todo</option>
-																		<option value="doing">Doing</option>
-																		<option value="reviewing">Reviewing</option>
-																		<option value="completed">Completed</option>
-																		<option value="canceled">Canceled</option>
-																	</select>
-																</div>
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-priority">Priority*</label>
-																	<select className="form-control" id="create-task-priority">
-																		<option value="0">Please select</option>
-																		<option value="low">Low</option>
-																		<option value="normal">Normal</option>
-																		<option value="important">Important</option>
-																		<option value="critical">Critical</option>
-																	</select>
-																</div>
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-assignee">Assignee</label>
-																	<Typeahead
-																		{...searchAssigneeState}
-																		id="create-task-assignee"
-																		labelKey="email"
-																		placeholder="Type to search a user to assign"
-																		ref='searchAssigneeRef'
-																		onChange={this.handleAssigneeChange}
-																	/>
-																</div>
-																<div className="form-group col-sm-6">
-																	<label htmlFor="create-task-parent">Parent Task</label>
-																	<Typeahead
-																		{...searchParentState}
-																		id="create-task-parent"
-																		labelKey="name"
-																		placeholder="Type to search a task as parent to this task"
-																		ref='searchParentRef'
-																		onChange={this.handleParentChange}
-																	/>
-																</div>
-																<div className="form-group col-sm-12">
-																	<label id="create-task-error" style={{ color: 'red' }}></label>
-																</div>
-															</div>
-														</div>
-														<div className="block-content block-content-full text-right border-top">
-															<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-															<button type="button" className="btn btn-sm btn-primary" onClick={this.createTask}><i className="fa fa-check"></i> Ok</button>
-														</div>
+													</div>
+													<div className="block-content block-content-full text-right border-top">
+														<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
+														<button type="button" className="btn btn-sm btn-primary" onClick={this.createTask}><i className="fa fa-check"></i> Ok</button>
 													</div>
 												</div>
 											</div>
 										</div>
-										<div className="d-flex justify-content-between push"></div>
-										<div className="pull-x">
-											<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
-												<tbody>
-													{listTask.map((item) => <TaskItem key={item._id} {...item} />)}
-												</tbody>
-											</table>
-										</div>
+									</div>
+									<div className="d-flex justify-content-between push"></div>
+									<div className="pull-x">
+										<table className="js-table-checkable table table-hover table-vcenter font-size-sm js-table-checkable-enabled">
+											<tbody>
+												{listTask.map((item) => <TaskItem key={item._id} {...item} />)}
+											</tbody>
+										</table>
 									</div>
 								</div>
 							</div>
-						}
+						</div>
 					</div>
 				</div>
 			</main>

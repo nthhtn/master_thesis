@@ -38,7 +38,7 @@ class TicketItem extends Component {
 				<td><span className={'badge badge-' + severityClass[severity]}>{severity}</span></td>
 				<td style={{ color: sector ? sector.color : 'black' }}>{sector ? sector.name : ''}</td>
 				<td style={{ color: issue ? issue.color : 'black' }}>{issue ? issue.name : ''}</td>
-				<td>{assignee}</td>
+				<td>{assignee ? assignee.firstName + ' ' + assignee.lastName : ''}</td>
 				<td>{toDateString(createdAt)}</td>
 			</tr>
 		);

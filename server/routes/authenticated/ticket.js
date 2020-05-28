@@ -61,11 +61,9 @@ module.exports = (app, db) => {
 					text: result.text,
 					link: host + '/tickets/' + result.ticketId
 				};
-				console.log(templateData);
 				const path = `${__dirname}/../../views/ticket_reply.html`;
 				let html = fs.readFileSync(path, 'utf8');
 				Object.keys(templateData).map((key) => html = html.replace('{{' + key + '}}', templateData[key]));
-				console.log(html);
 				sendMail({ to: 'thehien115@gmail.com', subject: `Re: Ticket "${ticket.title}"`, body: html });
 			} catch (error) {
 				return res.status(400).json({ success: false, error: error.message });

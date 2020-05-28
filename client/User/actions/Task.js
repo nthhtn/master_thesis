@@ -1,4 +1,4 @@
-export function createTask(task, assignee) {
+export function createTask(task, assignee, parent) {
 	return async (dispatch) => {
 		const response = await fetch(`/api/tasks`, {
 			credentials: 'same-origin',
@@ -7,7 +7,7 @@ export function createTask(task, assignee) {
 			body: JSON.stringify(task)
 		});
 		const responseJson = await response.json();
-		const result = { ...responseJson.result, assignee };
+		const result = { ...responseJson.result, assignee, parent };
 		dispatch(createTaskSuccess(result));
 	};
 };

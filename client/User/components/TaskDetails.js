@@ -28,7 +28,7 @@ class ChildTask extends PureComponent {
 				<td style={{ width: '8%' }}><span className={'badge badge-' + statusClass[status]}>{status}</span></td>
 				<td style={{ width: '8%' }}><span className={'badge badge-' + priorityClass[priority]}>{priority}</span></td>
 				<td className="d-none d-sm-table-cell font-w600" style={{ width: '15%' }}>
-					{assignee ? assignee.firstName + ' ' + assignee.lastName : 'Unassigned'}
+					{assignee ? assignee.firstName + ' ' + assignee.lastName : ''}
 				</td>
 				<td className="d-none d-xl-table-cell text-muted" style={{ width: '20%' }}>
 					<em>{toDateString(dueAt)}</em>
@@ -96,11 +96,13 @@ export default class TaskDetails extends Component {
 		const status = $('#update-task-status').val();
 		const priority = $('#update-task-priority').val();
 		const dueAt = $('#update-task-due').val();
+		const assigneeId = self.state.userSelected.length > 0 ? self.state.userSelected[0]._id : null;
+		// const assignee = assigneeId ? self.state.userSelected[0] : null;
 		if (!name || !description || !dueAt) {
 			$('#update-task-error').text('Missing required field(s)!');
 			return;
 		}
-		await self.props.dispatch(updateTask(taskId, { name, description, status, priority, dueAt: Date.parse(new Date(dueAt)) }));
+		await self.props.dispatch(updateTask(taskId, { name, description, status, priority, dueAt: Date.parse(new Date(dueAt)), assigneeId }));
 		swal.fire({
 			html: 'Successful update!',
 			timer: 2000
@@ -123,6 +125,7 @@ export default class TaskDetails extends Component {
 	async updateParentTask() {
 		const { taskId } = self.state;
 		const parentId = self.state.taskSelected.length > 0 ? self.state.taskSelected[0]._id : null;
+		// const parent = parentId ? self.state.taskSelected[0]._id : null;
 		await self.props.dispatch(updateTask(taskId, { parentId }));
 		swal.fire({
 			html: 'Successful update!',

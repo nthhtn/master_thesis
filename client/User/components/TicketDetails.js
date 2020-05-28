@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { AsyncTypeahead } from 'react-bootstrap-typeahead';
 import swal from 'sweetalert2';
 
 import { getTicketDetails, addTicketComment, listTicketComment, updateTicket } from '../actions/Ticket';
@@ -40,7 +41,13 @@ export default class TicketDetails extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { ticketId: this.props.match.params.id };
+		this.state = {
+			ticketId: this.props.match.params.id,
+			userAllowNew: false,
+			userIsLoading: false,
+			userOptions: [],
+			userSelected: []
+		};
 		self = this;
 	}
 
@@ -48,6 +55,9 @@ export default class TicketDetails extends Component {
 		const { ticketId } = this.state;
 		await this.props.dispatch(getTicketDetails(ticketId));
 		const ticket = this.props.ticket.current;
+		if (ticket.assignee) {
+			this.setState({ userSelected: [ticket.assignee] });
+		}
 		await this.props.dispatch(listTicketComment(ticketId));
 		this.props.ticketSector.list.length == 0 && await this.props.dispatch(listTicketSector());
 		this.props.issue.list.length == 0 && await this.props.dispatch(listIssue());
@@ -71,11 +81,26 @@ export default class TicketDetails extends Component {
 		const severity = $('#update-ticket-severity').val();
 		const sectorId = $('#update-ticket-sector').val() == 0 ? '' : $('#update-ticket-sector').val();
 		const issueId = $('#update-ticket-issue').val() == 0 ? '' : $('#update-ticket-issue').val();
-		await self.props.dispatch(updateTicket(self.state.ticketId, { status, severity, sectorId, issueId }));
+		const assigneeId = self.state.userSelected.length > 0 ? self.state.userSelected[0]._id : null;
+		const assignee = assigneeId ? self.state.userSelected[0] : null;
+		await self.props.dispatch(updateTicket(self.state.ticketId, { status, severity, sectorId, issueId, assigneeId }, assignee));
 		swal.fire({
 			html: 'Successful update!',
 			timer: 2000
 		});
+	}
+
+	async searchUser(query) {
+		self.setState({ userIsLoading: true });
+		const { current } = self.props.task;
+		const response = await fetch(`/api/users/search?q=${query}`, { credentials: 'same-origin' });
+		const responseJson = await response.json();
+		const result = responseJson.result;
+		self.setState({ userIsLoading: false, userOptions: result });
+	}
+
+	handleUserChange(selected) {
+		self.setState({ userSelected: selected });
 	}
 
 	render() {
@@ -84,6 +109,12 @@ export default class TicketDetails extends Component {
 		const { firstName, lastName } = this.props.user.me;
 		const listSector = this.props.ticketSector.list;
 		const listIssue = this.props.issue.list;
+		const searchUserState = {
+			allowNew: this.state.userAllowNew,
+			isLoading: this.state.userIsLoading,
+			options: this.state.userOptions,
+			selected: this.state.userSelected
+		};
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -161,6 +192,18 @@ export default class TicketDetails extends Component {
 															(<option key={issue._id} value={issue._id} style={{ color: issue.color }}>{issue.name}</option>))
 														}
 													</select>
+												</div>
+												<div className="form-group col-sm-2">
+													<label htmlFor="update-ticket-assignee">Assignee</label>
+													<AsyncTypeahead
+														{...searchUserState}
+														id="update-ticket-assignee"
+														labelKey="email"
+														placeholder="Type to search a user to assign"
+														onSearch={this.searchUser}
+														onChange={this.handleUserChange}
+														ref='searchUserRef'
+													/>
 												</div>
 												<div className="form-group col-sm-2">
 													<button type="button" className="btn btn-sm btn-primary" style={{ position: 'absolute', bottom: 0 }} onClick={this.updateTicket}>

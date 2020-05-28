@@ -91,6 +91,7 @@ export default class Issue extends Component {
 
 	render() {
 		const list = this.props.issue.list;
+		const { me } = this.props.user;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -105,14 +106,16 @@ export default class Issue extends Component {
 						<div className="block-header block-header-default">
 							<h3 className="block-title"></h3>
 							<div className="block-options">
-								<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-issue">
-									<i className="fa fa-plus"></i> New
-								</button>
+								{me.role === 'manager' &&
+									<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-issue">
+										<i className="fa fa-plus"></i> New
+									</button>
+								}
 							</div>
 						</div>
 						<div className="block-content">
 							<div className="modal fade" id="modal-create-issue" tabIndex="-1" role="dialog" aria-labelledby="modal-create-issue" aria-modal="true" style={{ paddingRight: '15px' }}>
-								<div className="modal-dialog modal-lg" role="document">
+								<div className="modal-dialog modal-xl" role="document">
 									<div className="modal-content">
 										<div className="block block-themed block-transparent mb-0">
 											<div className="block-header bg-primary-dark">
@@ -159,7 +162,7 @@ export default class Issue extends Component {
 								</div>
 							</div>
 							<div className="modal fade" id="modal-update-issue" tabIndex="-1" role="dialog" aria-labelledby="modal-update-issue" aria-modal="true" style={{ paddingRight: '15px' }}>
-								<div className="modal-dialog modal-lg" role="document">
+								<div className="modal-dialog modal-xl" role="document">
 									<div className="modal-content">
 										<div className="block block-themed block-transparent mb-0">
 											<div className="block-header bg-primary-dark">
@@ -178,23 +181,23 @@ export default class Issue extends Component {
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-issue-name">Name*</label>
-														<input type="text" className="form-control" id="update-issue-name" />
+														<input type="text" className="form-control" id="update-issue-name" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-issue-description">Behaviour Description*</label>
-														<textarea rows="4" className="form-control" id="update-issue-description" />
+														<textarea rows="4" className="form-control" id="update-issue-description" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-issue-reproduction">Reproduction Steps*</label>
-														<textarea rows="6" className="form-control" id="update-issue-reproduction" />
+														<textarea rows="6" className="form-control" id="update-issue-reproduction" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-issue-resolution">Resolution Mechanism*</label>
-														<textarea rows="6" className="form-control" id="update-issue-resolution" />
+														<textarea rows="6" className="form-control" id="update-issue-resolution" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-issue-color">Label Color*</label>
-														<input type="text" className="form-control" id="update-issue-color" />
+														<input type="text" className="form-control" id="update-issue-color" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label id="update-issue-error" style={{ color: 'red' }}></label>
@@ -203,7 +206,8 @@ export default class Issue extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateIssue}><i className="fa fa-check"></i> Ok</button>
+												{me.role === 'manager' &&
+													<button type="button" className="btn btn-sm btn-primary" onClick={this.updateIssue}><i className="fa fa-check"></i> Ok</button>}
 											</div>
 										</div>
 									</div>

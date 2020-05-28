@@ -82,6 +82,7 @@ export default class TicketSector extends Component {
 
 	render() {
 		const listSector = this.props.ticketSector.list;
+		const { me } = this.props.user;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -96,14 +97,16 @@ export default class TicketSector extends Component {
 						<div className="block-header block-header-default">
 							<h3 className="block-title"></h3>
 							<div className="block-options">
-								<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-sector">
-									<i className="fa fa-plus"></i> New
-								</button>
+								{me.role === 'manager' &&
+									<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-sector">
+										<i className="fa fa-plus"></i> New
+									</button>
+								}
 							</div>
 						</div>
 						<div className="block-content">
 							<div className="modal fade" id="modal-create-sector" tabIndex="-1" role="dialog" aria-labelledby="modal-create-sector" aria-modal="true" style={{ paddingRight: '15px' }}>
-								<div className="modal-dialog modal-md" role="document">
+								<div className="modal-dialog modal-xl" role="document">
 									<div className="modal-content">
 										<div className="block block-themed block-transparent mb-0">
 											<div className="block-header bg-primary-dark">
@@ -142,7 +145,7 @@ export default class TicketSector extends Component {
 								</div>
 							</div>
 							<div className="modal fade" id="modal-update-sector" tabIndex="-1" role="dialog" aria-labelledby="modal-update-sector" aria-modal="true" style={{ paddingRight: '15px' }}>
-								<div className="modal-dialog modal-md" role="document">
+								<div className="modal-dialog modal-xl" role="document">
 									<div className="modal-content">
 										<div className="block block-themed block-transparent mb-0">
 											<div className="block-header bg-primary-dark">
@@ -161,15 +164,15 @@ export default class TicketSector extends Component {
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-sector-name">Name*</label>
-														<input type="text" className="form-control" id="update-sector-name" />
+														<input type="text" className="form-control" id="update-sector-name" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-sector-email">Description*</label>
-														<textarea rows="4" className="form-control" id="update-sector-description" />
+														<textarea rows="4" className="form-control" id="update-sector-description" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label htmlFor="update-sector-color">Label Color*</label>
-														<input type="text" className="form-control" id="update-sector-color" />
+														<input type="text" className="form-control" id="update-sector-color" disabled={me.role !== 'manager'} />
 													</div>
 													<div className="form-group col-sm-12">
 														<label id="update-sector-error" style={{ color: 'red' }}></label>
@@ -178,7 +181,8 @@ export default class TicketSector extends Component {
 											</div>
 											<div className="block-content block-content-full text-right border-top">
 												<button type="button" className="btn btn-sm btn-light" data-dismiss="modal">Close</button>
-												<button type="button" className="btn btn-sm btn-primary" onClick={this.updateTicketSector}><i className="fa fa-check"></i> Ok</button>
+												{me.role === 'manager' &&
+													<button type="button" className="btn btn-sm btn-primary" onClick={this.updateTicketSector}><i className="fa fa-check"></i> Ok</button>}
 											</div>
 										</div>
 									</div>

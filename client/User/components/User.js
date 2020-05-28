@@ -61,6 +61,7 @@ export default class User extends Component {
 
 	render() {
 		const list = this.props.user.list;
+		const { me } = this.props.user;
 		return (
 			<main id="main-container">
 				<div className="bg-body-light">
@@ -75,9 +76,11 @@ export default class User extends Component {
 						<div className="block-header block-header-default">
 							<h3 className="block-title"></h3>
 							<div className="block-options">
-								<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-user">
-									<i className="fa fa-plus"></i> New
-								</button>
+								{me.role === 'manager' &&
+									<button type="button" className="btn btn-success mr-2" data-toggle="modal" data-target="#modal-create-user">
+										<i className="fa fa-plus"></i> New
+									</button>
+								}
 							</div>
 						</div>
 						<div className="block-content">

@@ -48,7 +48,7 @@ export default class Home extends Component {
 															<div className="form-group">
 																<input type="text"
 																	className="form-control form-control-alt form-control-lg"
-																	id="login-username" placeholder="Username" />
+																	id="login-username" placeholder="Email" />
 															</div>
 															<div className="form-group">
 																<input type="password"

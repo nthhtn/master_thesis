@@ -61,12 +61,11 @@ export default class Profile extends Component {
 	async createTicket() {
 		const title = $('#create-ticket-title').val();
 		const message = $('#create-ticket-message').val();
-		const severity = $('#create-ticket-severity').val();
-		if (!title || !message || severity == 0) {
+		if (!title || !message) {
 			$('#create-ticket-error').text('Missing required field(s)');
 			return;
 		}
-		const data = { title, message, ownerId: self.props.customer.current._id, status: 'open', severity };
+		const data = { title, message, ownerId: self.props.customer.current._id, status: 'open', severity: 'normal' };
 		await self.props.dispatch(createTicket(data));
 		$('#create-ticket-error').text('');
 		$('#modal-create-ticket input').val('');
@@ -157,16 +156,6 @@ export default class Profile extends Component {
 																<div className="form-group col-sm-12">
 																	<label htmlFor="create-ticket-message">Message*</label>
 																	<textarea rows="4" className="form-control" id="create-ticket-message" />
-																</div>
-																<div className="form-group col-sm-12">
-																	<label htmlFor="create-ticket-severity">Severity*</label>
-																	<select className="form-control" id="create-ticket-severity">
-																		<option value="0">Please select</option>
-																		<option value="low">Low</option>
-																		<option value="normal">Normal</option>
-																		<option value="high">High</option>
-																		<option value="urgent">Urgent</option>
-																	</select>
 																</div>
 																<div className="form-group col-sm-12">
 																	<label id="create-ticket-error" style={{ color: 'red' }}></label>

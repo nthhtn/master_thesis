@@ -59,7 +59,7 @@ export default class TicketDetails extends Component {
 
 	render() {
 		const { comments, current } = this.props.ticket;
-		const { title, message, createdAt, status, severity } = current;
+		const { title, message, createdAt, status } = current;
 		const customer = this.props.customer.current;
 		return (
 			<main id="main-container">
@@ -93,11 +93,6 @@ export default class TicketDetails extends Component {
 												<div className="form-group col-sm-2">
 													<label htmlFor="update-ticket-status">Status&nbsp;
 													<span className={'badge badge-' + statusClass[status]}>{status}</span>
-													</label>
-												</div>
-												<div className="form-group col-sm-2">
-													<label htmlFor="update-ticket-severity">Severity&nbsp;
-													<span className={'badge badge-' + severityClass[severity]}>{severity}</span>
 													</label>
 												</div>
 											</div>
